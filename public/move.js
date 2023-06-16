@@ -6,10 +6,10 @@ let positionX = 0;
 let positionY = 0;
 
 // user account
-var client_key = "kimu"
+var client_key = prompt("请输入 client_key：");
 
 // websocket 連接
-const ws = new WebSocket('ws://localhost:8181/ws/test/kimu')
+const ws = new WebSocket('ws://localhost:8181/ws/test')
 
 // 监听WebSocket连接事件
 ws.addEventListener('open', (event) => {
@@ -33,7 +33,7 @@ function moveBox() {
 
     // 发送位置状态到服务器
     const positionData = {
-        client_key: client,
+        client_key: client_key,
         x: positionX,
         y: positionY
     };
