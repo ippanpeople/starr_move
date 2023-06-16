@@ -71,7 +71,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func handleMessages() {
-	t := time.NewTicker(10 * time.Second)
+	t := time.NewTicker(time.Millisecond)
 	for {
 		select {
 		case <-t.C:

@@ -18,7 +18,35 @@ ws.addEventListener('open', (event) => {
 
 // 监听WebSocket接收消息事件
 ws.addEventListener('message', (event) => {
-    console.log('收到消息:', event.data);
+    // 解析接收到的数据为JSON格式
+    const receivedData = JSON.parse(event.data);
+
+    // 提取client_key值到新的变量
+    const receivedClientKey = receivedData.client_key;
+    const receivedX = receivedData.x;
+    const receivedY = receivedData.y;
+    
+
+    if (receivedClientKey != client_key){
+      console.log('接收到的 client_key:', receivedClientKey);
+      console.log('接收到的 x:', receivedX);
+      console.log('接收到的 y:', receivedY);
+      if (document.getElementById(receivedClientKey) != null){
+        const newBox = document.getElementById(receivedClientKey);
+
+        newBox.style.left = receivedX * 10 + 'px';
+        newBox.style.top = receivedY * 10 + 'px';
+      }else{
+        const newBox = document.createElement('div');
+        const boxId = receivedClientKey;
+        newBox.setAttribute('id', boxId); // 设置方块的ID属性
+        newBox.classList.add('box');
+        newBox.style.backgroundColor = 'black';
+        newBox.style.left = receivedX;
+        newBox.style.top = receivedY;
+        container.appendChild(newBox);  
+      }
+    }
 });
 
 // 监听WebSocket错误事件
