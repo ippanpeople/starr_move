@@ -9,20 +9,20 @@ let positionY = 0;
 var client_key = "kimu"
 
 // websocket 連接
-const ws = new WebSocket('ws://lobi/ws/' + client_key)
+const ws = new WebSocket('ws://localhost:8181/ws/test/kimu')
 
 // 监听WebSocket连接事件
-socket.addEventListener('open', (event) => {
+ws.addEventListener('open', (event) => {
     console.log('WebSocket连接已打开');
 });
 
 // 监听WebSocket接收消息事件
-socket.addEventListener('message', (event) => {
+ws.addEventListener('message', (event) => {
     console.log('收到消息:', event.data);
 });
 
 // 监听WebSocket错误事件
-socket.addEventListener('error', (event) => {
+ws.addEventListener('error', (event) => {
     console.error('WebSocket发生错误:', event);
 });
   
@@ -33,10 +33,11 @@ function moveBox() {
 
     // 发送位置状态到服务器
     const positionData = {
+        client_key: client,
         x: positionX,
         y: positionY
     };
-    socket.send(JSON.stringify(positionData));
+    ws.send(JSON.stringify(positionData));
 }
 
 document.addEventListener('keydown', (event) => {
