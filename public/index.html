@@ -1,17 +1,51 @@
-<style>
-    .box {
-    width: 10px;
-    height: 10px;
-    /* 其他样式属性 */
-    position: absolute;
-    }
-    .newBox {
-    width: 10px;
-    height: 10px;
-    /* 其他样式属性 */
-    position: absolute;
-    }
-</style>
-<div id="container">
-</div>
-<script src="/public/move.js"></script>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        #container .table {
+            width: 50px;
+            height: 60px;
+            background-color: rgb(208, 106, 4); /* 或者设置其他背景颜色 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 50;
+            transform: translate(-50%, -50%);
+        }
+        #container .table_area {
+            width: 90px;
+            height: 100px;
+            background-color: rgb(180, 171, 171); /* 或者设置其他背景颜色 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 40;
+            transform: translate(-50%, -50%);
+        }
+        .box {
+            width: 10px;
+            height: 10px;
+            /* 其他样式属性 */
+            position: absolute;
+        }
+
+        .newBox {
+            width: 10px;
+            height: 10px;
+            /* 其他样式属性 */
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div class="table"></div>
+        <div class="table_area"></div>
+    </div>
+    <script src="/public/move.js"></script>
+    <!-- <script src="move.js"></script> -->
+</body>
+
+</html>

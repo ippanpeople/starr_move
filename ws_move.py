@@ -43,7 +43,7 @@ async def websocket_endpoint(ws: WebSocket):
                 for client in client_list:
                     client_key = hex(id(client))
                     await client.send_json({
-                        "resource": "server request 200",
+                        "resource": "server response 200",
                         "event": "init_resp_event",
                         "client_list": [hex(id(c)) for c in client_list],
                         "client_num": len(user_list),
@@ -67,7 +67,7 @@ async def websocket_endpoint(ws: WebSocket):
                 for client in client_list:
                     client_key = hex(id(client))
                     await client.send_json({
-                        "resource": "server request 200",
+                        "resource": "server response 200",
                         "event": "position_resp_event",
                         "client_list": [hex(id(c)) for c in client_list],
                         "client_num": len(user_list),

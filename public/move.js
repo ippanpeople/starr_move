@@ -129,13 +129,22 @@ document.addEventListener('keydown', (event) => {
   const key = event.key;
 
   if (key === 'ArrowUp') {
-    positionY -= 1;
+    if (positionY != 48 | (positionY == 48 & positionX < 47) | (positionY == 48 & positionX > 51)){
+      positionY -= 1;
+    }
   } else if (key === 'ArrowDown') {
-    positionY += 1;
+    if (positionY != 41 | (positionY == 41 & positionX < 47) | (positionY == 41 & positionX > 51)){
+      positionY += 1;
+    }
   } else if (key === 'ArrowLeft') {
-    positionX -= 1;
+    if (positionX != 52 | (positionX == 52 & positionY < 42) | (positionX == 52 & positionY > 47)){
+      positionX -= 1;
+    }
   } else if (key === 'ArrowRight') {
-    positionX += 1;
+    if (positionX != 46 | (positionX == 46 & positionY < 42) | (positionX == 46 & positionY > 47)){
+      positionX += 1;
+    }
+    
   }
 
   console.log("X:", positionX, "Y:", positionY)
