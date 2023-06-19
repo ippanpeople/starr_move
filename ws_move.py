@@ -78,7 +78,6 @@ async def websocket_endpoint(ws: WebSocket):
                         "y": user_list[index]['y'],
                         "message" : f"client { data['username'] } is moved",
                     })
-
                 # await ws.send_json({
                 #     "resource": "server request 200",
                 #     "event": "position_resp_event",

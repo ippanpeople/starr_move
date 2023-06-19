@@ -1,4 +1,5 @@
 // 设置方块的初始位置
+//正方形の初期位置を設定する
 let positionX = 0;
 let positionY = 0;
 
@@ -16,23 +17,25 @@ const init_instance = {
 const ws = new WebSocket('ws://localhost:8181/ws/test')
 
 // 监听WebSocket连接事件
+//// WebSocket接続イベントのリスニング
 ws.addEventListener('open', (event) => {
   console.log('WebSocket连接已打开');
   ws.send(JSON.stringify(init_instance));
 });
 
 // 监听WebSocket接收消息事件
+//WebSocketの受信メッセージイベントをリスニングする
 ws.addEventListener('message', (event) => {
   // 解析接收到的数据为JSON格式
   const receivedData = JSON.parse(event.data);
-  const resp_event = receivedData['Event']
-  const receivedClientList = receivedData.Client_list;
-  const receivedClientNum = receivedData.Client_num;
-  const receivedClientKey = receivedData.Client_key;
-  const receivedUserList = receivedData.User_list;
-  const receivedUsername = receivedData.Username;
-  const receivedX = receivedData.X;
-  const receivedY = receivedData.Y;
+  const resp_event = receivedData['event']
+  const receivedClientList = receivedData.client_list;
+  const receivedClientNum = receivedData.client_num;
+  const receivedClientKey = receivedData.client_key;
+  const receivedUserList = receivedData.user_list;
+  const receivedUsername = receivedData.username;
+  const receivedX = receivedData.x;
+  const receivedY = receivedData.y;
   // const changeX = receivedData.user_list
   // const changeY = receivedData.user_list
   console.log(receivedData)
@@ -51,13 +54,18 @@ ws.addEventListener('message', (event) => {
       container.appendChild(box);
       console.log(receivedUserList);
       // 循环遍历 receivedUserList 中的每个用户
+      //receivedUserListの各ユーザーをループ処理する。
+      //前から生成されたもの
       for (user in receivedUserList) {
+        console.log("user:  " + user)
         // const { username, positionX, positionY, client_num } = user;
 
         // 检查是否是当前用户
+        //自分がカレントユーザーであるかどうかを確認する
         if (receivedUserList[user]["username"] != username) {
           console.log("================", receivedUserList[user]["x"])
           // 创建新的方块
+          //新しいスクエアを作成する
           const newBox = document.createElement('div');
           const newBoxId = receivedUserList[user]['username'];
           newBox.setAttribute('id', newBoxId); // 设置方块的ID属性
@@ -69,13 +77,14 @@ ws.addEventListener('message', (event) => {
           container.appendChild(newBox);
         }
       }
+    //後から生成されたもの
     } else {
       // console.log('接收到的 client_key:', receivedClientKey);
       // console.log('接收到的 x:', receivedX);
       // console.log('接收到的 y:', receivedY);
       const newBox = document.createElement('div');
       const newBoxId = receivedUsername;
-      newBox.setAttribute('id', newBoxId); // 设置方块的ID属性
+      newBox.setAttribute('id', newBoxId); // 设置方块的ID属性  正方形のIDプロパティを設定する
       newBox.classList.add('newBox');
       newBox.style.backgroundColor = 'black';
       newBox.style.left = receivedX * 10 + 'px';
@@ -87,23 +96,25 @@ ws.addEventListener('message', (event) => {
     console.log(receivedUsername)
     const targetUsername = receivedUsername;
     let index = null;
-
-    for (let i = 0; i < receivedData.User_list.length; i++) {
-      const userDict =receivedData.User_list[i];
-      if (userDict.Username === targetUsername) {
+    //kimu追加
+    console.log(typeof(receivedData.user_list))
+    for (let i = 0; i < receivedData.user_list.length; i++) {
+      const userDict =receivedData.user_list[i];
+      if (userDict.username === targetUsername) {
         index = i;
         break;
       }
     }
-    console.log(receivedData.User_list[index])
+    console.log(receivedData.user_list[index])
     const newBox = document.getElementById(receivedUsername);
 
-    newBox.style.left = receivedData.User_list[index]["X"] * 10 + 'px';
-    newBox.style.top = receivedData.User_list[index]["Y"] * 10 + 'px';
+    newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
+    newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
   }
 });
 
 // 监听WebSocket错误事件
+//WebSocketのエラーイベントをリスニングする
 ws.addEventListener('error', (event) => {
   console.error('WebSocket发生错误:', event);
 });
@@ -111,11 +122,13 @@ ws.addEventListener('error', (event) => {
 
 function moveMyBox() {
   // 获取方块元素
+  //四角い要素を取得する
   const myBox = document.getElementById(username);
   myBox.style.left = positionX * 10 + 'px';
   myBox.style.top = positionY * 10 + 'px';
 
   // 发送位置状态到服务器
+  //位置情報をサーバーに送信する
   const positionData = {
     event: "position_event",
     username: username,

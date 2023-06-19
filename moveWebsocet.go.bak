@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/rs/xid"
 )
 
 type SendMessage struct {
@@ -16,7 +17,8 @@ type SendMessage struct {
 	Client_num int `json:"client_num"`
 	Client_key string `json:"client_key"`
 	// User_list map[string]map[string]int `json:"User_list"`
-	User_list []map[string]interface{} `json:"user_list"`
+	User_list []map[string]interface{} `json:"User_list"`
+
 	Username string `json:"username"`
 	X          int `json:"x"`
 	Y          int `json:"y"`
@@ -26,11 +28,11 @@ type users struct {
 	client_list []string
 	// user_list map[string]map[string]int
 	user_list []map[string]interface{} `json:"User_list"`
+
 }
 
 var us users
-// var clients = make(map[string]*websocket.Conn) // 接続されるクライアント
-var clients = make(map[*websocket.Conn]bool)
+var clients = make(map[string]*websocket.Conn) // 接続されるクライアント
 var stackMessage []SendMessage
 var id string
 var clientkey string
@@ -49,10 +51,9 @@ func main() {
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
-	// guid := xid.New()
+	guid := xid.New()
 
-	// clientkey = guid.String()
-	
+	clientkey = guid.String()
 	//websocketへのルーティング
 	http.HandleFunc("/ws/test", handleConnections)
 	go handleMessages()
@@ -63,29 +64,23 @@ func main() {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
-
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	//送られてきたgetリクエストをwebsocetにアップグレード
-	fmt.Println("!!!!!!!!!!start websocekt!!!!!!!!!!!!!")
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	//関数が終わったらwebsocektのコネクションをクローズ
 	defer ws.Close()
 	//クライアントを新しく登録
-	clients[ws] = true
+	clients[clientkey] = ws
 
 	for {
 		var rM SendMessage
 
 		err := ws.ReadJSON(&rM)
-		if err != nil {
-            log.Printf("error: %v", err)
-            delete(clients, ws)
-            break
-        }
 		fmt.Println("rm:  ",rM)
 		if rM.Event == "init_event" {
 			// if slices.Contains(us.user_list[],rM.Username){
@@ -112,9 +107,6 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Y : 0,
 				Message : "client " + rM.Username + " is initialized",
 			})
-			fmt.Println("init_resp_event_fin")
-
-
 		}else if rM.Event == "position_event" {
 			// fmt.Println("position_event")
 			// fmt.Println(us.user_list)
@@ -125,11 +117,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			i := us.userIndex(rM.Username)
 			fmt.Println("i:",i)
 
-
 			us.user_list[i]["X"] = rM.X
 			us.user_list[i]["Y"] = rM.Y
-
 			fmt.Println("us",us.user_list)
+
 			fmt.Println("position_event_middle")
 			fmt.Println(clients)
 
@@ -147,11 +138,12 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Message : "client " + rM.Username + " is initialized",
 			})
 			fmt.Println("position_event_fin")
+
 		}
 
 		if err != nil {
 			log.Printf("error:%v", err)
-			delete(clients,ws)
+			delete(clients,clientkey)
 			break
 		}
 		//受信されたデータをスタック
@@ -165,18 +157,19 @@ func handleMessages() {
 		select {
 		case <-t.C:
 			//stackMoveのブロードキャストする
-			for client := range clients {
+			for cName,client := range clients {
 				for _, m := range stackMessage {
 					err := client.WriteJSON(m)
 					if err != nil {
 						log.Printf("error: %v", err)
 						client.Close()
-						delete(clients, client)
+						delete(clients, cName)
 					}
+					fmt.Println("ok!")
+					fmt.Println(err)
 					fmt.Printf("stackMessage:%+v\n",stackMessage)
 				}
 			}
-			
 			//stackMoveの中を削除
 			stackMessage= stackMessage[:0]
 		}
