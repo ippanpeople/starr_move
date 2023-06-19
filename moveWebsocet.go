@@ -22,6 +22,7 @@ type SendMessage struct {
 	Y          int `json:"y"`
 	Message string `json:"message"` 
 }
+
 type users struct {
 	client_list []string
 	// user_list map[string]map[string]int
@@ -42,7 +43,6 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
-
 
 func main() {
 	// ファイルサーバーを立ち上げる
@@ -103,7 +103,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			stackMessage = append(stackMessage,SendMessage{
 				Resource: "server request 200",
 				Event: "init_resp_event",
-				Client_list: us.client_list,
+				Client_list: us.user_list,
 				Client_num: len(us.user_list),
 				Client_key: clientkey,
 				User_list : us.user_list,
@@ -126,8 +126,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("i:",i)
 
 
-			us.user_list[i]["X"] = rM.X
-			us.user_list[i]["Y"] = rM.Y
+			us.user_list[i]["x"] = rM.X
+			us.user_list[i]["y"] = rM.Y
 
 			fmt.Println("us",us.user_list)
 			fmt.Println("position_event_middle")
@@ -137,7 +137,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			stackMessage = append(stackMessage, SendMessage{
 				Resource: "server request 200",
 				Event: "position_resp_event",
-				Client_list: us.client_list,
+				Client_list: us.user_list,
 				Client_num: len(us.user_list),
 				Client_key: clientkey,
 				User_list : us.user_list,
@@ -176,7 +176,7 @@ func handleMessages() {
 					fmt.Printf("stackMessage:%+v\n",stackMessage)
 				}
 			}
-			
+
 			//stackMoveの中を削除
 			stackMessage= stackMessage[:0]
 		}

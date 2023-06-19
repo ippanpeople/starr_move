@@ -73,6 +73,8 @@ ws.addEventListener('message', (event) => {
           newBox.style.backgroundColor = 'black';
           newBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
           newBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
+          //kimu追加
+          console.log(receivedClientList)
           newBox.style.zIndex = receivedClientList.length * 10;
           container.appendChild(newBox);
         }
@@ -105,7 +107,8 @@ ws.addEventListener('message', (event) => {
         break;
       }
     }
-    console.log(receivedData.user_list[index])
+    // console.log(receivedData.user_list[index])
+    console.log("userDict:  " + index)
     const newBox = document.getElementById(receivedUsername);
 
     newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
