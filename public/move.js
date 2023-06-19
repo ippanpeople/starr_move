@@ -3,18 +3,15 @@ let positionX = 0;
 let positionY = 0;
 
 // user account
-var client_key = prompt("请输入 client_key：");
+var username = prompt("请输入 username：");
 const client_list = [];
+const client_num = client_list.length
 const init_instance = {
-  client_key: client_key,
+  event: "init_event",
+  username: username,
   x: positionX,
   y: positionY
 };
-// 将客户端名称添加到数组中
-function addClient(clientName) {
-  client_list.push(clientName);
-}
-
 // websocket 連接
 const ws = new WebSocket('ws://localhost:8181/ws/test')
 
@@ -22,39 +19,87 @@ const ws = new WebSocket('ws://localhost:8181/ws/test')
 ws.addEventListener('open', (event) => {
   console.log('WebSocket连接已打开');
   ws.send(JSON.stringify(init_instance));
-  const box = document.createElement('div');
-  const myBoxId = client_key;
-  box.setAttribute('id', myBoxId); // 设置方块的ID属性
-  box.classList.add('box');
-  box.style.backgroundColor = 'red';
-  box.style.left = positionX;
-  box.style.top = positionY;
-  container.appendChild(box);
-  addClient(client_key)
-  console.log("client list:", JSON.stringify(client_list),"total client:", client_key.length)
 });
 
 // 监听WebSocket接收消息事件
 ws.addEventListener('message', (event) => {
   // 解析接收到的数据为JSON格式
   const receivedData = JSON.parse(event.data);
-
-  // 提取client_key值到新的变量
+  const resp_event = receivedData['event']
+  const receivedClientList = receivedData.client_list;
+  const receivedClientNum = receivedData.client_num;
   const receivedClientKey = receivedData.client_key;
+  const receivedUserList = receivedData.user_list;
+  const receivedUsername = receivedData.username;
   const receivedX = receivedData.x;
   const receivedY = receivedData.y;
+  // const changeX = receivedData.user_list
+  // const changeY = receivedData.user_list
+  console.log(receivedData)
 
+  // (0, 0)にブロックを生成
+  if (resp_event == "init_resp_event") {
+    if (receivedUsername == username) {
+      const box = document.createElement('div');
+      const myBoxId = username;
+      box.setAttribute('id', myBoxId); // 设置方块的ID属性
+      box.classList.add('box');
+      box.style.backgroundColor = 'red';
+      box.style.left = positionX;
+      box.style.top = positionY;
+      box.style.zIndex = receivedClientNum * 10;
+      container.appendChild(box);
+      console.log(receivedUserList);
+      // 循环遍历 receivedUserList 中的每个用户
+      for (user in receivedUserList) {
+        // const { username, positionX, positionY, client_num } = user;
 
-  if (receivedClientKey != client_key) {
-    console.log('接收到的 client_key:', receivedClientKey);
-    console.log('接收到的 x:', receivedX);
-    console.log('接收到的 y:', receivedY);
-    if (document.getElementById(receivedClientKey) != null) {
-      const newBox = document.getElementById(receivedClientKey);
-
+        // 检查是否是当前用户
+        if (receivedUserList[user]["username"] != username) {
+          console.log("================", receivedUserList[user]["x"])
+          // 创建新的方块
+          const newBox = document.createElement('div');
+          const newBoxId = receivedUserList[user]['username'];
+          newBox.setAttribute('id', newBoxId); // 设置方块的ID属性
+          newBox.classList.add('newBox');
+          newBox.style.backgroundColor = 'black';
+          newBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
+          newBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
+          newBox.style.zIndex = receivedClientList.length * 10;
+          container.appendChild(newBox);
+        }
+      }
+    } else {
+      // console.log('接收到的 client_key:', receivedClientKey);
+      // console.log('接收到的 x:', receivedX);
+      // console.log('接收到的 y:', receivedY);
+      const newBox = document.createElement('div');
+      const newBoxId = receivedUsername;
+      newBox.setAttribute('id', newBoxId); // 设置方块的ID属性
+      newBox.classList.add('newBox');
+      newBox.style.backgroundColor = 'black';
       newBox.style.left = receivedX * 10 + 'px';
       newBox.style.top = receivedY * 10 + 'px';
+      newBox.style.zIndex = client_list.length;
+      container.appendChild(newBox);
     }
+  } else if (resp_event == "position_resp_event") {
+    console.log(receivedUsername)
+    const targetUsername = receivedUsername;
+    let index = null;
+
+    for (let i = 0; i < receivedData.user_list.length; i++) {
+      const userDict =receivedData.user_list[i];
+      if (userDict.username === targetUsername) {
+        index = i;
+        break;
+      }
+    }
+    console.log(receivedData.user_list[index])
+    const newBox = document.getElementById(receivedUsername);
+
+    newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
+    newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
   }
 });
 
@@ -64,15 +109,16 @@ ws.addEventListener('error', (event) => {
 });
 
 
-function moveBox() {
+function moveMyBox() {
   // 获取方块元素
-  const myBox = document.getElementById(client_key);
+  const myBox = document.getElementById(username);
   myBox.style.left = positionX * 10 + 'px';
   myBox.style.top = positionY * 10 + 'px';
 
   // 发送位置状态到服务器
   const positionData = {
-    client_key: client_key,
+    event: "position_event",
+    username: username,
     x: positionX,
     y: positionY
   };
@@ -93,5 +139,5 @@ document.addEventListener('keydown', (event) => {
   }
 
   console.log("X:", positionX, "Y:", positionY)
-  requestAnimationFrame(moveBox);
+  requestAnimationFrame(moveMyBox);
 });
