@@ -25,14 +25,14 @@ ws.addEventListener('open', (event) => {
 ws.addEventListener('message', (event) => {
   // 解析接收到的数据为JSON格式
   const receivedData = JSON.parse(event.data);
-  const resp_event = receivedData['event']
-  const receivedClientList = receivedData.client_list;
-  const receivedClientNum = receivedData.client_num;
-  const receivedClientKey = receivedData.client_key;
-  const receivedUserList = receivedData.user_list;
-  const receivedUsername = receivedData.username;
-  const receivedX = receivedData.x;
-  const receivedY = receivedData.y;
+  const resp_event = receivedData['Event']
+  const receivedClientList = receivedData.Client_list;
+  const receivedClientNum = receivedData.Client_num;
+  const receivedClientKey = receivedData.Client_key;
+  const receivedUserList = receivedData.User_list;
+  const receivedUsername = receivedData.Username;
+  const receivedX = receivedData.X;
+  const receivedY = receivedData.Y;
   // const changeX = receivedData.user_list
   // const changeY = receivedData.user_list
   console.log(receivedData)
@@ -88,18 +88,18 @@ ws.addEventListener('message', (event) => {
     const targetUsername = receivedUsername;
     let index = null;
 
-    for (let i = 0; i < receivedData.user_list.length; i++) {
-      const userDict =receivedData.user_list[i];
-      if (userDict.username === targetUsername) {
+    for (let i = 0; i < receivedData.User_list.length; i++) {
+      const userDict =receivedData.User_list[i];
+      if (userDict.Username === targetUsername) {
         index = i;
         break;
       }
     }
-    console.log(receivedData.user_list[index])
+    console.log(receivedData.User_list[index])
     const newBox = document.getElementById(receivedUsername);
 
-    newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
-    newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
+    newBox.style.left = receivedData.User_list[index]["X"] * 10 + 'px';
+    newBox.style.top = receivedData.User_list[index]["Y"] * 10 + 'px';
   }
 });
 

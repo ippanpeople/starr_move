@@ -17,7 +17,7 @@ type SendMessage struct {
 	Client_num int
 	Client_key string 
 	User_list map[string]map[string]int
-	Username string
+	Username strings
 	X          int    
 	Y          int    
 	Message string
