@@ -1,0 +1,24 @@
+version: "3.3"
+
+# コンテナ間で通信を行うためのネットワークブリッジ
+networks:
+  local-net:
+    driver: bridge
+
+volumes:
+  mysql:
+    driver: local
+services:
+  # FastAPI
+  ws:
+    container_name: "move_ws"
+    # path配下のDockerfile読み込み
+    build: docker
+    tty: true 
+    ports:
+      - "8181:8181"
+#      - "5000:5000"
+    volumes:
+      - .:/var/www/ws_public_html
+    networks:
+      - local-net
