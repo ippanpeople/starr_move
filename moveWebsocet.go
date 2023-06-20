@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/rs/xid"
 )
 
 type SendMessage struct {
@@ -28,8 +29,8 @@ type users struct {
 }
 
 var us users
-// var clients = make(map[string]*websocket.Conn) // 接続されるクライアント
-var clients = make(map[*websocket.Conn]bool)
+var clients = make(map[string]*websocket.Conn) // 接続されるクライアント
+// var clients = make(map[*websocket.Conn]bool)
 var stackMessage []SendMessage
 var id string
 var clientkey string
@@ -70,11 +71,15 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	guid := xid.New()
+
+	clientkey = guid.String()
 	
 	//関数が終わったらwebsocektのコネクションをクローズ
 	defer ws.Close()
 	//クライアントを新しく登録
-	clients[ws] = true
+	clients[clientkey] = ws
 
 	for {
 		var rM SendMessage
@@ -82,7 +87,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		err := ws.ReadJSON(&rM)
 		if err != nil {
             log.Printf("error: %v", err)
-            delete(clients, ws)
+            delete(clients, clientkey)
             break
         }
 		fmt.Println("rm:  ",rM)
@@ -111,12 +116,12 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Y : 0,
 				Message : "client " + rM.Username + " is initialized",
 			}
-			for client := range clients{
+			for cName,client := range clients{
 				err := client.WriteJSON(m)
 				if err != nil {
 					log.Printf("error: %v", err)
 						client.Close()
-						delete(clients, client)
+						delete(clients, cName)
 				}
 			}
 			fmt.Println("init_resp_event_fin")
@@ -153,20 +158,22 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Y :rM.Y,
 				Message : "client " + rM.Username + " is initialized",
 			}
-			for client := range clients{
+			for cName,client := range clients{
 				err := client.WriteJSON(m)
 				if err != nil {
 					log.Printf("error: %v", err)
 						client.Close()
-						delete(clients, client)
+						delete(clients, cName)
 				}
 			}
+			fmt.Println("clientlist:" ,clients)
+
 			fmt.Println("position_event_fin")
 		}
 
 		if err != nil {
 			log.Printf("error:%v", err)
-			delete(clients,ws)
+			delete(clients,clientkey)
 			break
 		}
 		//受信されたデータをスタック
