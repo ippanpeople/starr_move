@@ -15,7 +15,7 @@ const init_instance = {
   room_status: room_status
 };
 // websocket 連接
-const ws = new WebSocket('ws://localhost:8181/ws/test')
+const ws = new WebSocket('ws://10.0.1.201:8181/ws/test')
 
 // 监听WebSocket连接事件
 ws.addEventListener('open', (event) => {

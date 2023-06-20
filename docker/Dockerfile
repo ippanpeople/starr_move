@@ -8,7 +8,7 @@ RUN /usr/local/bin/python -m pip install --upgrade pip
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8181"]
+CMD ["uvicorn", "main:app", "--reload", "--host", "10.0.1.201", "--port", "8181"]
 
 # Case1: FastAPIをuvicorn8000ポートで起動
 #CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
