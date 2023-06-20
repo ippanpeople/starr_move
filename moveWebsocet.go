@@ -70,6 +70,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	
 	//関数が終わったらwebsocektのコネクションをクローズ
 	defer ws.Close()
 	//クライアントを新しく登録
