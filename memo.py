@@ -1,1 +1,1 @@
-user_list[index]['y'] = data['y']
+user_list[index]['y'] = 2
