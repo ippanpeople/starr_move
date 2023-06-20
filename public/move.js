@@ -1,6 +1,7 @@
 // 设置方块的初始位置
 let positionX = 0;
 let positionY = 0;
+let room_status = "exit";
 
 // user account
 var username = prompt("请输入 username：");
@@ -10,7 +11,8 @@ const init_instance = {
   event: "init_event",
   username: username,
   x: positionX,
-  y: positionY
+  y: positionY,
+  room_status: room_status
 };
 // websocket 連接
 const ws = new WebSocket('ws://localhost:8181/ws/test')
@@ -33,6 +35,7 @@ ws.addEventListener('message', (event) => {
   const receivedUsername = receivedData.username;
   const receivedX = receivedData.x;
   const receivedY = receivedData.y;
+  const receivedRoomStatus = receivedData.room_status;
   // const changeX = receivedData.user_list
   // const changeY = receivedData.user_list
   console.log(receivedData)
@@ -89,7 +92,7 @@ ws.addEventListener('message', (event) => {
     let index = null;
 
     for (let i = 0; i < receivedData.user_list.length; i++) {
-      const userDict =receivedData.user_list[i];
+      const userDict = receivedData.user_list[i];
       if (userDict.username === targetUsername) {
         index = i;
         break;
@@ -115,36 +118,48 @@ function moveMyBox() {
   myBox.style.left = positionX * 10 + 'px';
   myBox.style.top = positionY * 10 + 'px';
 
-  // 发送位置状态到服务器
-  const positionData = {
-    event: "position_event",
-    username: username,
-    x: positionX,
-    y: positionY
-  };
-  ws.send(JSON.stringify(positionData));
+  //　table_areaのぶつかる処理判定
+  if (44 < positionX && positionX < 54 && 39 < positionY && positionY < 50){
+    const positionData = {
+      event: "position_event",
+      username: username,
+      x: positionX,
+      y: positionY,
+      room_status: "entry"
+    };  
+    ws.send(JSON.stringify(positionData))
+  }else{
+    const positionData = {
+      event: "position_event",
+      username: username,
+      x: positionX,
+      y: positionY,
+      room_status: "exit"
+    };  
+    ws.send(JSON.stringify(positionData))
+  }
 }
 
 document.addEventListener('keydown', (event) => {
   const key = event.key;
 
+  //　tableのぶつかる処理判定
   if (key === 'ArrowUp') {
-    if (positionY != 48 | (positionY == 48 & positionX < 47) | (positionY == 48 & positionX > 51)){
+    if (positionY != 48 | (positionY == 48 & positionX < 47) | (positionY == 48 & positionX > 51)) {
       positionY -= 1;
     }
   } else if (key === 'ArrowDown') {
-    if (positionY != 41 | (positionY == 41 & positionX < 47) | (positionY == 41 & positionX > 51)){
+    if (positionY != 41 | (positionY == 41 & positionX < 47) | (positionY == 41 & positionX > 51)) {
       positionY += 1;
     }
   } else if (key === 'ArrowLeft') {
-    if (positionX != 52 | (positionX == 52 & positionY < 42) | (positionX == 52 & positionY > 47)){
+    if (positionX != 52 | (positionX == 52 & positionY < 42) | (positionX == 52 & positionY > 47)) {
       positionX -= 1;
     }
   } else if (key === 'ArrowRight') {
-    if (positionX != 46 | (positionX == 46 & positionY < 42) | (positionX == 46 & positionY > 47)){
+    if (positionX != 46 | (positionX == 46 & positionY < 42) | (positionX == 46 & positionY > 47)) {
       positionX += 1;
     }
-    
   }
 
   console.log("X:", positionX, "Y:", positionY)

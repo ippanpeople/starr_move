@@ -14,7 +14,7 @@ services:
     container_name: "move_ws"
     # path配下のDockerfile読み込み
     build: docker
-    tty: true 
+    tty: true
     ports:
       - "8181:8181"
 #      - "5000:5000"

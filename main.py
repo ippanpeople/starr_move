@@ -29,8 +29,9 @@ async def websocket_endpoint(ws: WebSocket):
     try:
         while True:
             data = await ws.receive_json()
-            user = {"username":data['username'], "x":data['x'], "y":data['y']}
+            user = {"username":data['username'], "x":data['x'], "y":data['y'], "room_status": data['room_status']}
             print(str(data))
+            # print(str(user))
             # クライアントを識別するためのIDを取得
             # print(client_key)
             # print(client_key)
@@ -40,6 +41,14 @@ async def websocket_endpoint(ws: WebSocket):
                 if user not in user_list:
                     user_list.append(user)
                     print(user_list)
+
+                target_username = data['username']
+                index = None
+                for i, user_dict in enumerate(user_list):
+                    if user_dict['username'] == target_username:
+                        index = i
+                        break
+                print(str(index) + "=============================")
                 for client in client_list:
                     client_key = hex(id(client))
                     await client.send_json({
@@ -52,6 +61,7 @@ async def websocket_endpoint(ws: WebSocket):
                         "username": data['username'],
                         "x": 0,
                         "y": 0,
+                        "room_status": user_list[index]['room_status'],
                         "message" : f"client { data['username'] } is initialized",
                     })
             elif data['event'] == "position_event":
@@ -64,6 +74,7 @@ async def websocket_endpoint(ws: WebSocket):
                         break
                 user_list[index]['x'] = data['x']
                 user_list[index]['y'] = data['y']
+                user_list[index]['room_status'] = data['room_status']
                 for client in client_list:
                     client_key = hex(id(client))
                     await client.send_json({
@@ -76,6 +87,7 @@ async def websocket_endpoint(ws: WebSocket):
                         "username": data['username'],
                         "x": user_list[index]['x'],
                         "y": user_list[index]['y'],
+                        "room_status": user_list[index]['room_status'],
                         "message" : f"client { data['username'] } is moved",
                     })
 
