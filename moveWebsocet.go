@@ -27,6 +27,7 @@ type SendMessage struct {
 type users struct {
 	user_list []map[string]interface{} `json:"User_list"`
 }
+
 var health_check_count = make(map[string]int)
 
 var us users
@@ -36,6 +37,7 @@ var stackMessage []SendMessage
 var id string
 var clientkey string
 
+
 // アップグレーダ
 // var upgrader = websocket.Upgrader{}
 var upgrader = websocket.Upgrader{
@@ -44,13 +46,14 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+
+
 func main() {
 	// ファイルサーバーを立ち上げる
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
 	// guid := xid.New()
-
 	// clientkey = guid.String()
 	
 	//websocketへのルーティング
@@ -77,23 +80,48 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	guid := xid.New()
 
 	clientkey = guid.String()
-	
+
 	//関数が終わったらwebsocektのコネクションをクローズ
 	defer ws.Close()
 	//クライアントを新しく登録
 	clients[clientkey] = ws
 	health_check_count[clientkey] = 0
+	// us.user_list[]["clientkey"] = clientkey
 
 	for {
+		fmt.Println("!!!!!!!!!!!!!!!!loop start!!!!!!!!!!!!!!!")
+
 		var rM SendMessage
 
 		err := ws.ReadJSON(&rM)
 		if err != nil {
             log.Printf("error: %v", err)
+			log.Printf("reciveMess: error")
+			i := searchUsername(clientkey)
+			fmt.Println("i:  ",i)
+			fmt.Println("ususerlist first",us.user_list[i])
+			usname :=  us.user_list[i]["username"].(string)
+			us.user_list= us.user_list[:i+copy(us.user_list[i:], us.user_list[i+1:])]
+			// fmt.Println("ususerlist later:",us.user_list[i])
+
+			m := SendMessage{
+				Resource: "server response 200",
+				Event: "user_delete_event",
+				Client_key: clientkey,
+				Username: usname,
+			}
+			for cName,client := range clients{
+				err := client.WriteJSON(m)
+					if err != nil {
+						log.Printf("error: %v", err)
+						client.Close()
+						delete(clients, cName)
+					}
+			}
             delete(clients, clientkey)
             break
         }
-		fmt.Println("rm:  ",rM)
+		fmt.Println("recive message:  ",rM)
 		if rM.Event == "init_event" {
 			// if slices.Contains(us.user_list[],rM.Username){
 			if us.userIndex(rM.Username) == -1 {
@@ -104,8 +132,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				// fmt.Println(rM.Username)
 				u := make(map[string]interface{})
 				u["username"] =  rM.Username
+				//追加
+				u["clientkey"] = clientkey
 				us.user_list = append(us.user_list , u)
-				fmt.Println(rM.Username)
+				// fmt.Println()
 			}
 			m := SendMessage{
 				Resource: "server request 200",
@@ -124,19 +154,14 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					log.Printf("error: %v", err)
 						client.Close()
+						log.Printf("error: init_event")
+
 						delete(clients, cName)
 				}
 			}
-			fmt.Println("init_resp_event_fin")
-
-
+			// fmt.Println("init_resp_event_fin")
 		}else if rM.Event == "position_event" {
-			// fmt.Println("position_event")
-			// fmt.Println(us.user_list)
-			// // fmt.Println(us.user_list[rM.Username])
-			// fmt.Println(rM.Username)
-			// fmt.Println(rM.X)
-			// fmt.Println(rM.Y)
+			fmt.Println()
 			i := us.userIndex(rM.Username)
 			fmt.Println("i:",i)
 
@@ -145,8 +170,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			us.user_list[i]["y"] = rM.Y
 
 			fmt.Println("us",us.user_list)
-			fmt.Println("position_event_middle")
-			fmt.Println(clients)
+			// fmt.Println("position_event_middle")
+			// fmt.Println(clients)
 
 
 			m := SendMessage{
@@ -165,16 +190,20 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				err := client.WriteJSON(m)
 				if err != nil {
 					log.Printf("error: %v", err)
-						client.Close()
-						delete(clients, cName)
+					log.Printf("error: position_event")
+
+					client.Close()
+					delete(clients, cName)
 				}
 			}
 			fmt.Println("clientlist:" ,clients)
-			fmt.Println("position_event_fin")
+			// fmt.Println("position_event_fin")
 		}else if rM.Event == "healthcheck_resp_event"{
 			health_check_count[rM.Client_key] = 0
 			fmt.Println("client key:",rM.Client_key,"  health_ckeck_count",health_check_count[clientkey])
 		}
+
+		fmt.Println("!!!!!!!!!!!!!!!!loop end!!!!!!!!!!!!")
 
 		if err != nil {
 			log.Printf("error:%v", err)
@@ -225,7 +254,10 @@ func healthcheck(){
 	for {
 		select {
 		case <-t.C:
+			fmt.Println("!!!!!!!!!!!!!!!Health check start!!!!!!!!!!!!!!!\n")
+
 			fmt.Println("clients:",clients)
+			fmt.Println("userlist:",us.user_list)
 			//stackMoveのブロードキャストする
 	
 			for cName,client := range clients {
@@ -244,12 +276,41 @@ func healthcheck(){
 
 
 				if health_check_count[cName] > 2{
+					fmt.Println("error !!!!!")
+
 					delete(clients,cName)
+					i := searchUsername(cName)
+					usname :=  us.user_list[i]["username"].(string)
+
+					m := SendMessage{
+						Resource: "server request 200",
+						Event: "user_delete_event",
+						Username: usname,
+					}
+					for cName,client := range clients{
+						err := client.WriteJSON(m)
+						if err != nil {
+							log.Printf("error: %v", err)
+								client.Close()
+								delete(clients, cName)
+						}
+					}
 				}
 				health_check_count[cName] += 1
-
 			}
 			//stackMoveの中を削除
+			fmt.Println("\n!!!!!!!!!!!!!!!Health check end!!!!!!!!!!!!!!!\n")
+
 		}
 	}
+	
+}
+func searchUsername(clientkey string)(int){
+	for i,u := range us.user_list{
+		fmt.Println("i: ",i,"clientkey:",clientkey,"u: ",u)
+		if u["clientkey"] == clientkey{
+			return i
+		}
+	}
+	return -1
 }

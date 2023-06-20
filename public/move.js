@@ -123,6 +123,8 @@ ws.addEventListener('message', (event) => {
     console.log(healthcheck_resp_eventData)
     ws.send(JSON.stringify(healthcheck_resp_eventData));
   }else if(resp_event == "user_delete_event"){
+    var element = document.getElementById(receivedUsername);
+    element.remove();
 
   }
   ///////////////////////////////////////////////////////////////////////////////
