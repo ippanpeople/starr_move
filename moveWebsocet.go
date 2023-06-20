@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/rs/xid"
@@ -24,9 +25,9 @@ type SendMessage struct {
 }
 
 type users struct {
-	client_list []string
 	user_list []map[string]interface{} `json:"User_list"`
 }
+var health_check_count = make(map[string]int)
 
 var us users
 var clients = make(map[string]*websocket.Conn) // 接続されるクライアント
@@ -55,6 +56,7 @@ func main() {
 	//websocketへのルーティング
 	http.HandleFunc("/ws/test", handleConnections)
 	// go handleMessages()
+	go healthcheck()
 	log.Println("http server started on :8181")
 	err := http.ListenAndServe(":8181", nil)
 	// エラーがあった場合ロギングする
@@ -80,6 +82,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	defer ws.Close()
 	//クライアントを新しく登録
 	clients[clientkey] = ws
+	health_check_count[clientkey] = 0
 
 	for {
 		var rM SendMessage
@@ -167,8 +170,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			fmt.Println("clientlist:" ,clients)
-
 			fmt.Println("position_event_fin")
+		}else if rM.Event == "healthcheck_resp_event"{
+			health_check_count[rM.Client_key] = 0
+			fmt.Println("client key:",rM.Client_key,"  health_ckeck_count",health_check_count[clientkey])
 		}
 
 		if err != nil {
@@ -207,10 +212,44 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 func (us users)userIndex(checkname string)(int){
 	for i,v :=  range us.user_list{
-		fmt.Println("v[username]:  ",v["username"],"rM.username:  " , checkname)
+		// fmt.Println("v[username]:  ",v["username"],"rM.username:  " , checkname)
 		if v["username"]  == checkname{
 			return i
 		}
 	}
 	return -1
+}
+
+func healthcheck(){
+	t := time.NewTicker(time.Second * 3)
+	for {
+		select {
+		case <-t.C:
+			fmt.Println("clients:",clients)
+			//stackMoveのブロードキャストする
+	
+			for cName,client := range clients {
+				m := SendMessage{
+					Resource: "server request 200",
+					Event: "healthcheck_event",
+					Client_key: cName,
+				}
+				err := client.WriteJSON(m)
+				if err != nil {
+					log.Printf("error: %v", err)
+					client.Close()
+					delete(clients, cName)
+				}
+				// fmt.Println("healthcheck:",m)
+
+
+				if health_check_count[cName] > 2{
+					delete(clients,cName)
+				}
+				health_check_count[cName] += 1
+
+			}
+			//stackMoveの中を削除
+		}
+	}
 }
