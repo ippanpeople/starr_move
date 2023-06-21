@@ -4,7 +4,7 @@ let positionY = 0;
 let room_status = "exit";
 
 // user account
-var username = prompt("请输入 username：");
+var username = prompt("usernameを入力：");
 const client_list = [];
 const client_num = client_list.length
 const init_instance = {
@@ -14,16 +14,16 @@ const init_instance = {
   y: positionY,
   room_status: room_status
 };
-// websocket 連接
-const ws = new WebSocket('ws://10.0.1.201:8181/ws/test')
+// websocket コネクション
+const ws = new WebSocket('ws://localhost:8181/ws/test')
 
-// 监听WebSocket连接事件
+// Listen On WebSocket コネクション　Open
 ws.addEventListener('open', (event) => {
   console.log('WebSocket连接已打开');
   ws.send(JSON.stringify(init_instance));
 });
 
-// 监听WebSocket接收消息事件
+// Listen On WebSocket Message Receive
 ws.addEventListener('message', (event) => {
   // 解析接收到的数据为JSON格式
   const receivedData = JSON.parse(event.data);
@@ -45,7 +45,7 @@ ws.addEventListener('message', (event) => {
     if (receivedUsername == username) {
       const box = document.createElement('div');
       const myBoxId = username;
-      box.setAttribute('id', myBoxId); // 设置方块的ID属性
+      box.setAttribute('id', myBoxId); // 自分のブロックidを設置する
       box.classList.add('box');
       box.style.backgroundColor = 'red';
       box.style.left = positionX;
@@ -53,17 +53,17 @@ ws.addEventListener('message', (event) => {
       box.style.zIndex = receivedClientNum * 10;
       container.appendChild(box);
       console.log(receivedUserList);
-      // 循环遍历 receivedUserList 中的每个用户
+      // receivedUserList の中にいるすべてのユーザを検索
       for (user in receivedUserList) {
         // const { username, positionX, positionY, client_num } = user;
 
-        // 检查是否是当前用户
+        // 自分かどうかを確認
         if (receivedUserList[user]["username"] != username) {
           console.log("================", receivedUserList[user]["x"])
-          // 创建新的方块
+          // 自分じゃなければ、他人のボロックを生成
           const newBox = document.createElement('div');
           const newBoxId = receivedUserList[user]['username'];
-          newBox.setAttribute('id', newBoxId); // 设置方块的ID属性
+          newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
           newBox.classList.add('newBox');
           newBox.style.backgroundColor = 'black';
           newBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
@@ -78,7 +78,7 @@ ws.addEventListener('message', (event) => {
       // console.log('接收到的 y:', receivedY);
       const newBox = document.createElement('div');
       const newBoxId = receivedUsername;
-      newBox.setAttribute('id', newBoxId); // 设置方块的ID属性
+      newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
       newBox.classList.add('newBox');
       newBox.style.backgroundColor = 'black';
       newBox.style.left = receivedX * 10 + 'px';
@@ -106,14 +106,14 @@ ws.addEventListener('message', (event) => {
   }
 });
 
-// 监听WebSocket错误事件
+// Listen On WebSocket Error
 ws.addEventListener('error', (event) => {
-  console.error('WebSocket发生错误:', event);
+  console.error('WebSocket　Error が発生:', event);
 });
 
 
 function moveMyBox() {
-  // 获取方块元素
+  // ブラックのエレメントを取得
   const myBox = document.getElementById(username);
   myBox.style.left = positionX * 10 + 'px';
   myBox.style.top = positionY * 10 + 'px';
