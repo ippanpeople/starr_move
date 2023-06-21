@@ -35,7 +35,7 @@ var clients = make(map[string]*websocket.Conn) // 接続されるクライアン
 // var clients = make(map[*websocket.Conn]bool)
 var stackMessage []SendMessage
 var id string
-var clientkey string
+// var clientkey string
 
 
 // アップグレーダ
@@ -72,7 +72,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	//送られてきたgetリクエストをwebsocetにアップグレード
 	fmt.Println("!!!!!!!!!!start websocekt!!!!!!!!!!!!!")
 	ws, err := upgrader.Upgrade(w, r, nil)
-
+	var clientkey string
 	if err != nil {
 		log.Fatal(err)
 	}
