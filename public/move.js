@@ -15,7 +15,7 @@ const init_instance = {
   room_status: room_status
 };
 // websocket コネクション
-const ws = new WebSocket('wss://starr_move/ws/test')
+const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
 
 // Listen On WebSocket コネクション　Open
 ws.addEventListener('open', (event) => {
