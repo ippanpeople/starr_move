@@ -110,33 +110,21 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Client_key: clientkey,
 				Username: usname,
 			}
-			for cName,client := range clients{
-				err := client.WriteJSON(m)
-					if err != nil {
-						log.Printf("error: %v", err)
-						client.Close()
-						delete(clients, cName)
-					}
-			}
+			broadcast(m)
             delete(clients, clientkey)
             break
         }
 		fmt.Println("recive message:  ",rM)
 		if rM.Event == "init_event" {
 			// if slices.Contains(us.user_list[],rM.Username){
+			//ユーザが存在しなかった時のユーザ追加処理
 			if us.userIndex(rM.Username) == -1 {
-
-			// _,ok:= us.user_list[rM.Username]
-			// if ok{
-				// us.user_list[rM.Username] = nil
-				// fmt.Println(rM.Username)
 				u := make(map[string]interface{})
 				u["username"] =  rM.Username
-				//追加
 				u["clientkey"] = clientkey
 				us.user_list = append(us.user_list , u)
-				// fmt.Println()
 			}
+			//ブロードキャスト
 			m := SendMessage{
 				Resource: "server request 200",
 				Event: "init_resp_event",
@@ -149,16 +137,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Y : 0,
 				Message : "client " + rM.Username + " is initialized",
 			}
-			for cName,client := range clients{
-				err := client.WriteJSON(m)
-				if err != nil {
-					log.Printf("error: %v", err)
-						client.Close()
-						log.Printf("error: init_event")
-
-						delete(clients, cName)
-				}
-			}
+			broadcast(m)
 			// fmt.Println("init_resp_event_fin")
 		}else if rM.Event == "position_event" {
 			fmt.Println()
@@ -186,16 +165,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Y :rM.Y,
 				Message : "client " + rM.Username + " is initialized",
 			}
-			for cName,client := range clients{
-				err := client.WriteJSON(m)
-				if err != nil {
-					log.Printf("error: %v", err)
-					log.Printf("error: position_event")
-
-					client.Close()
-					delete(clients, cName)
-				}
-			}
+			broadcast(m)
 			fmt.Println("clientlist:" ,clients)
 			// fmt.Println("position_event_fin")
 		}else if rM.Event == "healthcheck_resp_event"{
@@ -287,14 +257,7 @@ func healthcheck(){
 						Event: "user_delete_event",
 						Username: usname,
 					}
-					for cName,client := range clients{
-						err := client.WriteJSON(m)
-						if err != nil {
-							log.Printf("error: %v", err)
-								client.Close()
-								delete(clients, cName)
-						}
-					}
+					broadcast(m)
 				}
 				health_check_count[cName] += 1
 			}
@@ -305,6 +268,18 @@ func healthcheck(){
 	}
 	
 }
+func broadcast(m SendMessage){
+	for cName,client := range clients{
+		err := client.WriteJSON(m)
+		if err != nil {
+			log.Printf("error: %v", err)
+				client.Close()
+				log.Printf("error: init_event")
+
+				delete(clients, cName)
+		}
+	}
+}
 func searchUsername(clientkey string)(int){
 	for i,u := range us.user_list{
 		fmt.Println("i: ",i,"clientkey:",clientkey,"u: ",u)
@@ -313,4 +288,5 @@ func searchUsername(clientkey string)(int){
 		}
 	}
 	return -1
+
 }
