@@ -79,6 +79,7 @@ ws.addEventListener('message', (event) => {
           container.appendChild(newBox);
         }
       }
+      
     //後から生成されたもの
     } else {
       // console.log('接收到的 client_key:', receivedClientKey);
@@ -125,7 +126,6 @@ ws.addEventListener('message', (event) => {
   }else if(resp_event == "user_delete_event"){
     var element = document.getElementById(receivedUsername);
     element.remove();
-
   }
   ///////////////////////////////////////////////////////////////////////////////
 });
