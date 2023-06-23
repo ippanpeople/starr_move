@@ -116,14 +116,14 @@ ws.addEventListener('message', (event) => {
     newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
     newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
     ///////////////////////////////////追加　木村////////////////////////////////
-  }else if(resp_event == "healthcheck_event"){
-    const healthcheck_resp_eventData = {
-      event: "healthcheck_resp_event",
-      username: receivedUsername,
-      client_key: receivedClientKey
-    };
-    console.log(healthcheck_resp_eventData)
-    ws.send(JSON.stringify(healthcheck_resp_eventData));
+  // }else if(resp_event == "healthcheck_event"){
+  //   const healthcheck_resp_eventData = {
+  //     event: "healthcheck_resp_event",
+  //     username: receivedUsername,
+  //     client_key: receivedClientKey
+  //   };
+  //   console.log(healthcheck_resp_eventData)
+  //   ws.send(JSON.stringify(healthcheck_resp_eventData));
   }else if(resp_event == "user_delete_event"){
     var element = document.getElementById(receivedUsername);
     element.remove();

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/rs/xid"
@@ -62,7 +61,7 @@ func main() {
 	//websocketへのルーティング
 	http.HandleFunc("/ws/test", handleConnections)
 	// go handleMessages()
-	go healthcheck()
+	// go healthcheck()
 	log.Println("http server started on :8181")
 	err := http.ListenAndServe(":8181", nil)
 	// エラーがあった場合ロギングする
@@ -233,53 +232,53 @@ func (us users)userIndex(checkname string)(int){
 	return -1
 }
 
-func healthcheck(){
-	t := time.NewTicker(time.Second * 3)
-	for {
-		select {
-		case <-t.C:
-			fmt.Println("!!!!!!!!!!!!!!!Health check start!!!!!!!!!!!!!!!\n")
+// func healthcheck(){
+// 	t := time.NewTicker(time.Second * 3)
+// 	for {
+// 		select {
+// 		case <-t.C:
+// 			fmt.Println("!!!!!!!!!!!!!!!Health check start!!!!!!!!!!!!!!!\n")
 
-			fmt.Println("clients:",clients)
-			fmt.Println("userlist:",us.user_list)
-			//stackMoveのブロードキャストする
+// 			fmt.Println("clients:",clients)
+// 			fmt.Println("userlist:",us.user_list)
+// 			//stackMoveのブロードキャストする
 	
-			for cName,client := range clients {
-				m := SendMessage{
-					Resource: "server request 200",
-					Event: "healthcheck_event",
-					Client_key: cName,
-				}
-				err := client.WriteJSON(m)
-				if err != nil {
-					log.Printf("error: %v", err)
-					client.Close()
-					delete(clients, cName)
-				}
-				// fmt.Println("healthcheck:",m)
+// 			for cName,client := range clients {
+// 				m := SendMessage{
+// 					Resource: "server request 200",
+// 					Event: "healthcheck_event",
+// 					Client_key: cName,
+// 				}
+// 				err := client.WriteJSON(m)
+// 				if err != nil {
+// 					log.Printf("error: %v", err)
+// 					client.Close()
+// 					delete(clients, cName)
+// 				}
+// 				// fmt.Println("healthcheck:",m)
 
-				if health_check_count[cName] > 2{
-					fmt.Println("error !!!!!")
+// 				if health_check_count[cName] > 2{
+// 					fmt.Println("error !!!!!")
 
-					delete(clients,cName)
-					i := searchUsername(cName)
-					usname :=  us.user_list[i]["username"].(string)
+// 					delete(clients,cName)
+// 					i := searchUsername(cName)
+// 					usname :=  us.user_list[i]["username"].(string)
 
-					m := SendMessage{
-						Resource: "server request 200",
-						Event: "user_delete_event",
-						Username: usname,
-					}
-					broadcast(m)
-				}
-				health_check_count[cName] += 1
-			}
-			//stackMoveの中を削除
-			fmt.Println("\n!!!!!!!!!!!!!!!Health check end!!!!!!!!!!!!!!!\n")
-		}
-	}
+// 					m := SendMessage{
+// 						Resource: "server request 200",
+// 						Event: "user_delete_event",
+// 						Username: usname,
+// 					}
+// 					broadcast(m)
+// 				}
+// 				health_check_count[cName] += 1
+// 			}
+// 			//stackMoveの中を削除
+// 			fmt.Println("\n!!!!!!!!!!!!!!!Health check end!!!!!!!!!!!!!!!\n")
+// 		}
+// 	}
 	
-}
+// }
 func broadcast(m SendMessage){
 	for cName,client := range clients{
 		err := client.WriteJSON(m)
