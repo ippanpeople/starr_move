@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   websocket:
     build: .
@@ -8,4 +9,24 @@ services:
     ports:
       - 8181:8181
     tty: true
+  db:
+    image: mysql:8.0
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tulip
+      MYSQL_USER: akehi
+      MYSQL_PASSWORD: ie3a18
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes: 
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/mysql.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+
+
+
+
 
