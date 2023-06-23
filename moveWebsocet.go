@@ -29,6 +29,9 @@ type users struct {
 }
 
 var health_check_count = make(map[string]int)
+var stack_user_positiones  = make(map[string]map[string]interface{})
+
+
 
 var us users
 var clients = make(map[string]*websocket.Conn) // 接続されるクライアント
@@ -99,11 +102,16 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			log.Printf("reciveMess: error")
 			i := searchUsername(clientkey)
 			fmt.Println("i:  ",i)
-			fmt.Println("ususerlist first",us.user_list[i])
+			fmt.Println("ususerlist first",us.user_list[i])	
+
 			usname :=  us.user_list[i]["username"].(string)
+			stack_user_positiones[usname] = make(map[string]interface{})
+			
+			stack_user_positiones[usname]["x"] = us.user_list[i]["x"]
+			stack_user_positiones[usname]["y"] = us.user_list[i]["y"]
+
 			us.user_list= us.user_list[:i+copy(us.user_list[i:], us.user_list[i+1:])]
 			// fmt.Println("ususerlist later:",us.user_list[i])
-
 			m := SendMessage{
 				Resource: "server response 200",
 				Event: "user_delete_event",
@@ -118,11 +126,20 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		if rM.Event == "init_event" {
 			// if slices.Contains(us.user_list[],rM.Username){
 			//ユーザが存在しなかった時のユーザ追加処理
+			x := 0
+			y := 0
 			if us.userIndex(rM.Username) == -1 {
 				u := make(map[string]interface{})
 				u["username"] =  rM.Username
 				u["clientkey"] = clientkey
+				
+				if val,ok := stack_user_positiones[rM.Username];ok {
+					x = val["x"].(int)
+					y = val["y"].(int)
+				}
 				us.user_list = append(us.user_list , u)
+				fmt.Println("--------------------------------------------",us.user_list)
+
 			}
 			//ブロードキャスト
 			m := SendMessage{
@@ -133,8 +150,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Client_key: clientkey,
 				User_list : us.user_list,
 				Username: rM.Username,
-				X : 0,
-				Y : 0,
+				X : x,
+				Y : y,
 				Message : "client " + rM.Username + " is initialized",
 			}
 			broadcast(m)
@@ -165,7 +182,6 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			}
 			broadcast(m)
 			fmt.Println("clientlist:" ,clients)
-
 			// fmt.Println("position_event_fin")
 		}else if rM.Event == "healthcheck_resp_event"{
 			health_check_count[rM.Client_key] = 0
