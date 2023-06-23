@@ -38,7 +38,7 @@ ws.addEventListener('message', (event) => {
     // receivedUserList の中にいるすべてのユーザを検索
     for (user in receivedUserList) {
       // 自分かどうかを確認
-      if (receivedUserList[user]["username"] != username) {
+      if (receivedUserList[user]["username"] != username & receivedUserList[user]["connection_status"] == "connected") {
         console.log("================", receivedUserList[user]["x"])
         // 自分じゃなければ、他人のボロックを生成
         const newBox = document.createElement('div');
