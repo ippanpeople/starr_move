@@ -79,7 +79,7 @@ ws.addEventListener('message', (event) => {
           container.appendChild(newBox);
         }
       }
-      
+
     //後から生成されたもの
     } else {
       // console.log('接收到的 client_key:', receivedClientKey);
@@ -108,6 +108,7 @@ ws.addEventListener('message', (event) => {
         break;
       }
     }
+    
     // console.log(receivedData.user_list[index])
     console.log("userDict:  " + index)
     const newBox = document.getElementById(receivedUsername);
