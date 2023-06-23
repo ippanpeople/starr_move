@@ -144,14 +144,12 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			i := us.userIndex(rM.Username)
 			fmt.Println("i:",i)
 
-
 			us.user_list[i]["x"] = rM.X
 			us.user_list[i]["y"] = rM.Y
 
 			fmt.Println("us",us.user_list)
 			// fmt.Println("position_event_middle")
 			// fmt.Println(clients)
-
 
 			m := SendMessage{
 				Resource: "server request 200",
@@ -167,6 +165,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			}
 			broadcast(m)
 			fmt.Println("clientlist:" ,clients)
+
 			// fmt.Println("position_event_fin")
 		}else if rM.Event == "healthcheck_resp_event"{
 			health_check_count[rM.Client_key] = 0
@@ -174,7 +173,6 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Println("!!!!!!!!!!!!!!!!loop end!!!!!!!!!!!!")
-
 		if err != nil {
 			log.Printf("error:%v", err)
 			delete(clients,clientkey)
@@ -244,7 +242,6 @@ func healthcheck(){
 				}
 				// fmt.Println("healthcheck:",m)
 
-
 				if health_check_count[cName] > 2{
 					fmt.Println("error !!!!!")
 
@@ -263,7 +260,6 @@ func healthcheck(){
 			}
 			//stackMoveの中を削除
 			fmt.Println("\n!!!!!!!!!!!!!!!Health check end!!!!!!!!!!!!!!!\n")
-
 		}
 	}
 	
@@ -288,5 +284,4 @@ func searchUsername(clientkey string)(int){
 		}
 	}
 	return -1
-
 }
