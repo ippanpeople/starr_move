@@ -59,9 +59,6 @@ if (username === null || username === "") {
             // newBox.style.zIndex = receivedClientList.length * 10;
             newBox.style.zIndex = 10;
             container.appendChild(newBox);
-          
-          //--------------------------- 木村追加------------------------------
-          //新しいinitが来た時はその人だけ生成
           } else if (receivedData['username']  == username & receivedUserList[user]["username"] == username){
             const myBox = document.createElement('div');
             const myBoxId = username;
@@ -77,19 +74,21 @@ if (username === null || username === "") {
             console.log(receivedUserList);
           }
         }
-        //-------------------------------------------------------------------
+      //--------------------------- 木村追加------------------------------
+      //新しいinitが来た時はその人だけ生成
       }else {
         const newBox = document.createElement('div');
         const newBoxId = receivedUsername;
         newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
         newBox.classList.add('newBox');
         newBox.style.backgroundColor = 'black';
-        newBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
-        newBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
+        newBox.style.left = receivedX * 10 + 'px';
+        newBox.style.top = receivedY * 10 + 'px';
         // newBox.style.zIndex = receivedClientList.length * 10;
         newBox.style.zIndex = 10;
         container.appendChild(newBox);
       }
+      //-------------------------------------------------------------------
     } else if (resp_event == "position_resp_event") {
       console.log(receivedUsername)
       const targetUsername = receivedUsername;
