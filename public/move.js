@@ -48,9 +48,7 @@ if (username === null || username === "") {
           if (receivedUserList[user]["username"] != username & receivedUserList[user]["connection_status"] == "connected") {
             // console.log("================", receivedUserList[user]["x"])
             // 自分じゃなければ、他人のボロックを生成
-            console.log(user)
             
-            console.log(receivedUserList[user]["username"],"================", receivedUsername)
             const newBox = document.createElement('div');
             const newBoxId = receivedUserList[user]['username'];
             newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
@@ -61,7 +59,9 @@ if (username === null || username === "") {
             // newBox.style.zIndex = receivedClientList.length * 10;
             newBox.style.zIndex = 10;
             container.appendChild(newBox);
-            
+          
+          //--------------------------- 木村追加------------------------------
+          //新しいinitが来た時はその人だけ生成
           } else if (receivedData['username']  == username & receivedUserList[user]["username"] == username){
             const myBox = document.createElement('div');
             const myBoxId = username;
@@ -77,6 +77,7 @@ if (username === null || username === "") {
             console.log(receivedUserList);
           }
         }
+        //-------------------------------------------------------------------
       }else {
         const newBox = document.createElement('div');
         const newBoxId = receivedUsername;
