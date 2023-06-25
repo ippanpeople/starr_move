@@ -101,6 +101,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
             log.Printf("error: %v", err)
 			log.Printf("reciveMess: error")
+			log.Print("clientkey:",clientkey)
 			i := searchUsername(clientkey)
 			fmt.Println("i:  ",i)
 			fmt.Println("ususerlist first",us.user_list[i])	
@@ -126,6 +127,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Username: usname,
 			}
 			broadcast(m)
+			us.user_list[i]["clinetkey"] = ""
             delete(clients, clientkey)
             break
         }
@@ -155,6 +157,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 			}
 			i := us.userIndex(rM.Username)
+			us.user_list[i]["clientkey"] = clientkey
+
 			us.user_list[i]["connection_status"] = "connected"
 			fmt.Println("-----------------------------------",i)
 			//ブロードキャスト
