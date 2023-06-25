@@ -20,6 +20,8 @@ type SendMessage struct {
 	Username string `json:"username"`
 	X          int `json:"x"`
 	Y          int `json:"y"`
+	Room_status	string `json:"room_status"`
+	Connection_status string `json:"connection_status"`
 	Message string `json:"message"` 
 }
 
@@ -28,7 +30,7 @@ type users struct {
 }
 
 var health_check_count = make(map[string]int)
-var stack_user_positiones  = make(map[string]map[string]interface{})
+// var stack_user_positiones  = make(map[string]map[string]interface{})
 
 
 
@@ -104,17 +106,22 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("ususerlist first",us.user_list[i])	
 
 			usname :=  us.user_list[i]["username"].(string)
-			stack_user_positiones[usname] = make(map[string]interface{})
-			
-			stack_user_positiones[usname]["x"] = us.user_list[i]["x"]
-			stack_user_positiones[usname]["y"] = us.user_list[i]["y"]
+			us.user_list[i]["connection_status"] = "disconnected"
+
+
+			//stack_userに貯めていく
+			// stack_user_positiones[usname] = make(map[string]interface{})
+			// stack_user_positiones[usname]["x"] = us.user_list[i]["x"]
+			// stack_user_positiones[usname]["y"] = us.user_list[i]["y"]
 
 			//user_listを消す
 			// us.user_list= us.user_list[:i+copy(us.user_list[i:], us.user_list[i+1:])]
 			// fmt.Println("ususerlist later:",us.user_list[i])
+
+			
 			m := SendMessage{
 				Resource: "server response 200",
-				Event: "user_delete_event",
+				Event: "del_event",
 				Client_key: clientkey,
 				Username: usname,
 			}
@@ -132,15 +139,24 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				u := make(map[string]interface{})
 				u["username"] =  rM.Username
 				u["clientkey"] = clientkey
-				
-				if val,ok := stack_user_positiones[rM.Username];ok {
-					x = val["x"].(int)
-					y = val["y"].(int)
+				u["room_status"] = "exit"
+				u["connection_status"] = "connected"
+				//stack_userから取り出す
+				// if val,ok := stack_user_positiones[rM.Username];ok {
+				// 	x = val["x"].(int)
+				// 	y = val["y"].(int)
+				// }
+				if us.userIndex(rM.Username) == -1 {
+					u["x"] = 0
+					u["y"] = 0
 				}
 				us.user_list = append(us.user_list , u)
 				fmt.Println("--------------------------------------------",us.user_list)
 
 			}
+			i := us.userIndex(rM.Username)
+			us.user_list[i]["connection_status"] = "connected"
+			fmt.Println("-----------------------------------",i)
 			//ブロードキャスト
 			m := SendMessage{
 				Resource: "server request 200",
@@ -152,6 +168,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Username: rM.Username,
 				X : x,
 				Y : y,
+				Room_status: us.user_list[i]["room_status"].(string),
 				Message : "client " + rM.Username + " is initialized",
 			}
 			broadcast(m)
@@ -163,6 +180,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 			us.user_list[i]["x"] = rM.X
 			us.user_list[i]["y"] = rM.Y
+			us.user_list[i]["room_status"] = rM.Room_status
 
 			fmt.Println("us",us.user_list)
 			// fmt.Println("position_event_middle")
@@ -178,8 +196,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				Username: rM.Username,
 				X : rM.X,
 				Y :rM.Y,
+				Room_status: us.user_list[i]["room_status"].(string),
 				Message : "client " + rM.Username + " is initialized",
 			}
+			fmt.Println(us.user_list[i]["room_status"].(string))
 			broadcast(m)
 			fmt.Println("clientlist:" ,clients)
 			// fmt.Println("position_event_fin")
@@ -222,6 +242,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 // 		}
 // 	}
 // }
+
+
 
 func (us users)userIndex(checkname string)(int){
 	for i,v :=  range us.user_list{
