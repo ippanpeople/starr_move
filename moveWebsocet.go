@@ -109,7 +109,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			stack_user_positiones[usname]["x"] = us.user_list[i]["x"]
 			stack_user_positiones[usname]["y"] = us.user_list[i]["y"]
 
-			us.user_list= us.user_list[:i+copy(us.user_list[i:], us.user_list[i+1:])]
+			//user_listを消す
+			// us.user_list= us.user_list[:i+copy(us.user_list[i:], us.user_list[i+1:])]
 			// fmt.Println("ususerlist later:",us.user_list[i])
 			m := SendMessage{
 				Resource: "server response 200",
