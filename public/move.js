@@ -20,15 +20,15 @@ if (username === null || username === "") {
     room_status: room_status,
     connection_status: connection_status
   };
-<<<<<<< HEAD
 }
 
 // websocket コネクション
-const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
+// const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
+const ws = new WebSocket('ws://localhost:8181/ws/test')
 
 // Listen On WebSocket コネクション　Open
 ws.addEventListener('open', (event) => {
-  console.log('WebSocket连接已打开');
+  console.log('>>>>>>WebSocket コネクション　Open<<<<<<');
   ws.send(JSON.stringify(init_instance));
 });
 
@@ -52,29 +52,6 @@ ws.addEventListener('message', (event) => {
   // (0, 0)にブロックを生成
   if (resp_event == "init_resp_event") {
     if (receivedUsername == username) {
-=======
-  // websocket コネクション
-  const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
-
-  // Listen On WebSocket コネクション　Open
-  ws.addEventListener('open', (event) => {
-    console.log('>>>>>>WebSocket コネクション　Open<<<<<<');
-    ws.send(JSON.stringify(init_instance));
-  });
-
-  // Listen On WebSocket Message Receive
-  ws.addEventListener('message', (event) => {
-    // 解析接收到的数据为JSON格式
-    const receivedData = JSON.parse(event.data);
-    const resp_event = receivedData['event']
-    const receivedUserList = receivedData.user_list;
-    const receivedUsername = receivedData.username;
-    const receivedX = receivedData.x;
-    const receivedY = receivedData.y;
-    const receivedRoomStatus = receivedData.room_status;
-
-    if (resp_event == "init_resp_event") {
->>>>>>> 2091568540dc29396db980ce1a421e646c1195b9
       // receivedUserList の中にいるすべてのユーザを検索
       for (user in receivedUserList) {
         // 自分かどうかを確認
@@ -106,7 +83,6 @@ ws.addEventListener('message', (event) => {
           console.log(receivedUserList);
         }
       }
-<<<<<<< HEAD
     } else {
       const myBox = document.createElement('div');
       const myBoxId = username;
@@ -131,19 +107,6 @@ ws.addEventListener('message', (event) => {
       if (userDict.username === targetUsername) {
         index = i;
         break;
-=======
-    } else if (resp_event == "position_resp_event") {
-      console.log(receivedUsername)
-      const targetUsername = receivedUsername;
-      let index = null;
-
-      for (let i = 0; i < receivedData.user_list.length; i++) {
-        const userDict = receivedData.user_list[i];
-        if (userDict.username === targetUsername) {
-          index = i;
-          break;
-        }
->>>>>>> 2091568540dc29396db980ce1a421e646c1195b9
       }
     }
     console.log(receivedData.user_list)
@@ -161,7 +124,6 @@ ws.addEventListener('message', (event) => {
 });
 
 
-<<<<<<< HEAD
 // Listen On WebSocket Error
 ws.addEventListener('error', (event) => {
   console.error('WebSocket　Error が発生:', event);
@@ -195,42 +157,6 @@ function moveMyBox() {
       connection_status: connection_status
     };
     ws.send(JSON.stringify(positionData))
-=======
-  // Listen On WebSocket Error
-  ws.addEventListener('error', (event) => {
-    console.error('WebSocket　Error が発生:', event);
-  });
-
-
-  function moveMyBox() {
-    // ブラックのエレメントを取得
-    const myBox = document.getElementById(username);
-    myBox.style.left = positionX * 10 + 'px';
-    myBox.style.top = positionY * 10 + 'px';
-
-    //　table_areaのぶつかる処理判定
-    if (44 < positionX && positionX < 54 && 39 < positionY && positionY < 50) {
-      const positionData = {
-        event: "position_event",
-        username: username,
-        x: positionX,
-        y: positionY,
-        room_status: "entry",
-        connection_status: connection_status
-      };
-      ws.send(JSON.stringify(positionData))
-    } else {
-      const positionData = {
-        event: "position_event",
-        username: username,
-        x: positionX,
-        y: positionY,
-        room_status: "exit",
-        connection_status: connection_status
-      };
-      ws.send(JSON.stringify(positionData))
-    }
->>>>>>> 2091568540dc29396db980ce1a421e646c1195b9
   }
 }
 
