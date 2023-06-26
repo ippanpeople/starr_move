@@ -57,9 +57,9 @@ func main() {
 
 	//websocketへのルーティング
 	http.HandleFunc("/ws/test", handleConnections)
-	log.Println("http server started on :8181")
+	log.Println("http server started on :8282")
 
-	err := http.ListenAndServe(":8181", nil)
+	err := http.ListenAndServe(":8282", nil)
 	// エラーがあった場合ロギングする
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
