@@ -108,7 +108,7 @@ if (username === null || username === "") {
       newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
     } else if (resp_event == "del_event") {
       console.log(receivedUsername, "=========================================")
-      console.log(receivedData)
+      console.log(receivedUs)
       var element = document.getElementById(receivedUsername);
       element.remove();
     }
