@@ -120,7 +120,7 @@ async def websocket_endpoint(ws: WebSocket):
             elif data['event'] == "position_event":
 
                 target_username = data['username']
-                index = None
+                index = 0
 
                 for i, user_dict in enumerate(user_list):
                     if user_dict['username'] == target_username:
