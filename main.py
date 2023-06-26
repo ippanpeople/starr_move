@@ -73,16 +73,14 @@ async def websocket_endpoint(ws: WebSocket):
                     }
                     user_list.append(user)
                     print(user_list)
-
-
-                target_username = data['username']
-                index = None
-                for i, user_dict in enumerate(user_list):
-                    if user_dict['username'] == target_username:
-                        index = i
-                        break
-
-                user_list[index]['connection_status'] = "connected"
+                else:
+                    target_username = data['username']
+                    index = None
+                    for i, user_dict in enumerate(user_list):
+                        if user_dict['username'] == target_username:
+                            index = i
+                            break
+                    user_list[index]['connection_status'] = "connected"
 
                 # print(str(index) + "=============================")
                 for client in client_list:
