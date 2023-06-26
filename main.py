@@ -2,6 +2,8 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import HTMLResponse
 import json
+import time
+import asyncio
 
 app = FastAPI()
 client_list = []
@@ -24,12 +26,35 @@ async def websocket_endpoint(ws: WebSocket):
     client_str = str(client_list[-1])
     client_key = hex(id(client_list[-1]))
     print(client_list)
+    print(type(client_list))
     print(client_str)
     print(client_key)
     try:
         while True:
             data = await ws.receive_json()
-            user = {"username":data['username'], "x":data['x'], "y":data['y'], "room_status": data['room_status']}
+            print(str(data))
+            # await asyncio.sleep(3)
+            # await ws.send_json({
+            #     "resource": "server response 200",
+            #     "event": "health_check_event",
+            #     "message": "Server health check"
+            # })
+
+
+            user = {
+                "username": data['username'],
+                # "x": data['x'],
+                # "y": data['y'],
+                "room_status": data['room_status'],
+                "connection_status": data['connection_status']
+            }
+            # user = {
+            #     "username": data['username'],
+            #     "time_stamp": data['time_stamp'],
+            #     "x": data['x'],
+            #     "y": data['y'],
+            #     "room_status": data['room_status']
+            # }
             print(str(data))
             # print(str(user))
             # クライアントを識別するためのIDを取得
@@ -38,9 +63,17 @@ async def websocket_endpoint(ws: WebSocket):
             print(client_list)
             # 新たな接続を辞書に追加する
             if data["event"] == "init_event":
-                if user not in user_list:
+                if user['username'] not in [u['username'] for u in user_list]:
+                    user = {
+                        "username": data['username'],
+                        "x": 0,
+                        "y": 0,
+                        "room_status": data['room_status'],
+                        "connection_status": data['connection_status']
+                    }
                     user_list.append(user)
                     print(user_list)
+
 
                 target_username = data['username']
                 index = None
@@ -48,23 +81,44 @@ async def websocket_endpoint(ws: WebSocket):
                     if user_dict['username'] == target_username:
                         index = i
                         break
-                print(str(index) + "=============================")
+
+                user_list[index]['connection_status'] = "connected"
+
+                # print(str(index) + "=============================")
                 for client in client_list:
                     client_key = hex(id(client))
-                    await client.send_json({
-                        "resource": "server response 200",
-                        "event": "init_resp_event",
-                        "client_list": [hex(id(c)) for c in client_list],
-                        "client_num": len(user_list),
-                        "client_key": hex(id(client)),
-                        "user_list" : user_list,
-                        "username": data['username'],
-                        "x": 0,
-                        "y": 0,
-                        "room_status": user_list[index]['room_status'],
-                        "message" : f"client { data['username'] } is initialized",
-                    })
+
+                    if user not in user_list:
+                        await client.send_json({
+                            "resource": "server response 200",
+                            "event": "init_resp_event",
+                            "client_list": [hex(id(c)) for c in client_list],
+                            "client_num": len(user_list),
+                            "client_key": hex(id(client)),
+                            "user_list": user_list,
+                            "username": data['username'],
+                            "x": 0,
+                            "y": 0,
+                            "room_status": user_list[index]['room_status'],
+                            "message": f"client { data['username'] } is initialized",
+                        })
+                    else:
+                        await client.send_json({
+                            "resource": "server response 200",
+                            "event": "init_resp_event",
+                            "client_list": [hex(id(c)) for c in client_list],
+                            "client_num": len(user_list),
+                            "client_key": hex(id(client)),
+                            "user_list": user_list,
+                            "username": data['username'],
+                            "x": user_list[index]['x'],
+                            "y": user_list[index]['y'],
+                            "room_status": user_list[index]['room_status'],
+                            "message": f"client { data['username'] } is initialized",
+                        })
+
             elif data['event'] == "position_event":
+
                 target_username = data['username']
                 index = None
 
@@ -83,36 +137,43 @@ async def websocket_endpoint(ws: WebSocket):
                         "client_list": [hex(id(c)) for c in client_list],
                         "client_num": len(user_list),
                         "client_key": hex(id(client)),
-                        "user_list" : user_list,
+                        "user_list": user_list,
                         "username": data['username'],
                         "x": user_list[index]['x'],
                         "y": user_list[index]['y'],
                         "room_status": user_list[index]['room_status'],
-                        "message" : f"client { data['username'] } is moved",
+                        "message": f"client { data['username'] } is moved",
                     })
-
-                # await ws.send_json({
-                #     "resource": "server request 200",
-                #     "event": "position_resp_event",
-                #     "username": data['username'],
-                #     "x": user_list[index]['x'],
-                #     "y": user_list[index]['y']
-                # })
-                # await client.send_json({
-                #     "event": "init_resp_event",
-                #     "client_list": [hex(id(c)) for c in client_list],
-                #     "client_num": len(user_list),
-                #     "client_key": hex(id(client)),
-                #     "user_list" : user_list,
-                #     "username": data['username'],
-                #     "x": 0,
-                #     "y": 0,
-                #     "message" : f"client { data['username'] } is initialized",
-                # })
 
             # 处理接收到的数据
 
     except WebSocketDisconnect:
-        # 处理 WebSocket 连接断开的情况
+        index = 0
+        for client in client_list:
+            if client == ws:
+                index = index
+                break
+            else:
+                index += 1
+        print(index)
+        print(client_list[index])
+
         client_list.remove(ws)
+    
+        user_list[index]['connection_status'] = "disconnected"
+
+        for client in client_list:
+            client_key = hex(id(client))
+            await client.send_json({
+                "resource": "server response 200",
+                "event": "del_event",
+                "user_list": user_list,
+                "username": user_list[index]['username'],
+                "message": f"client { user_list[index]['username'] } is disconnected",
+            })
+        # print(user_list[index])
+        # user_list.remove(user_list[index])
+
+
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         pass
