@@ -20,7 +20,8 @@ if (username === null || username === "") {
     connection_status: connection_status
   };
   // websocket コネクション
-  const ws = new WebSocket('ws://localhost:8282/ws/test')
+  // const ws = new WebSocket('ws://localhost:8282/ws/test')
+  const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
 
   // Listen On WebSocket コネクション　Open
   ws.addEventListener('open', (event) => {

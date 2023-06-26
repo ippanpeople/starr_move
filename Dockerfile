@@ -5,7 +5,7 @@ WORKDIR ${ROOT}
 
 RUN apk update && apk add git
 
-COPY ./moveWebsocket.go ${ROOT}
+# COPY ./moveWebsocket.go ${ROOT}
 
 COPY go.mod ${ROOT}
 
