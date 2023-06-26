@@ -63,6 +63,14 @@ async def websocket_endpoint(ws: WebSocket):
             print(client_list)
             # 新たな接続を辞書に追加する
             if data["event"] == "init_event":
+
+                target_username = data['username']
+                index = None
+                for i, user_dict in enumerate(user_list):
+                    if user_dict['username'] == target_username:
+                        index = i
+                        break
+
                 if user['username'] not in [u['username'] for u in user_list]:
                     user = {
                         "username": data['username'],
@@ -74,12 +82,6 @@ async def websocket_endpoint(ws: WebSocket):
                     user_list.append(user)
                     print(user_list)
                 else:
-                    target_username = data['username']
-                    index = None
-                    for i, user_dict in enumerate(user_list):
-                        if user_dict['username'] == target_username:
-                            index = i
-                            break
                     user_list[index]['connection_status'] = "connected"
 
                 # print(str(index) + "=============================")
