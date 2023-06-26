@@ -19,9 +19,9 @@ if (username === null || username === "") {
     room_status: room_status,
     connection_status: connection_status
   };
-// websocket コネクション
-// const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
-const ws = new WebSocket('ws://localhost:8181/ws/test')
+  // websocket コネクション
+  // const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
+  const ws = new WebSocket('ws://localhost:8181/ws/test')
 
   // Listen On WebSocket コネクション　Open
   ws.addEventListener('open', (event) => {
@@ -41,7 +41,9 @@ const ws = new WebSocket('ws://localhost:8181/ws/test')
     const receivedRoomStatus = receivedData.room_status;
 
     if (resp_event == "init_resp_event") {
-      if (receivedUsername == username){
+      console.log(receivedUserList)
+      console.log(receivedUserList[receivedUserList.length-1]['username'])
+      if (receivedUserList[receivedUserList.length-1]['username'] == username) {
         // receivedUserList の中にいるすべてのユーザを検索
         for (user in receivedUserList) {
           // 自分かどうかを確認
@@ -58,7 +60,7 @@ const ws = new WebSocket('ws://localhost:8181/ws/test')
             // newBox.style.zIndex = receivedClientList.length * 10;
             newBox.style.zIndex = 10;
             container.appendChild(newBox);
-          } else if (receivedData['username']  == username & receivedUserList[user]["username"] == username){
+          } else if (receivedData['username'] == username & receivedUserList[user]["username"] == username) {
             const myBox = document.createElement('div');
             const myBoxId = username;
             myBox.setAttribute('id', myBoxId); // 自分のブロックidを設置する
@@ -73,19 +75,18 @@ const ws = new WebSocket('ws://localhost:8181/ws/test')
             console.log(receivedUserList);
           }
         }
-      }else{
-        const myBox = document.createElement('div');
-        const myBoxId = username;
-        myBox.setAttribute('id', myBoxId); // 自分のブロックidを設置する
-        myBox.classList.add('myBox');
-        myBox.style.backgroundColor = 'red';
-        myBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
-        positionX = receivedUserList[user]["x"]
-        myBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
-        positionY = receivedUserList[user]["y"]
-        myBox.style.zIndex = 20;
-        container.appendChild(myBox);
-        console.log(receivedUserList);
+      } else {
+        // 自分じゃなければ、他人のボロックを生成
+        const newBox = document.createElement('div');
+        const newBoxId = receivedUserList[receivedUserList.length-1]['username'];
+        newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
+        newBox.classList.add('newBox');
+        newBox.style.backgroundColor = 'black';
+        newBox.style.left = receivedUserList[receivedUserList.length-1]["x"] * 10 + 'px';
+        newBox.style.top = receivedUserList[receivedUserList.length-1]["y"] * 10 + 'px';
+        // newBox.style.zIndex = receivedClientList.length * 10;
+        newBox.style.zIndex = 10;
+        container.appendChild(newBox);
       }
     } else if (resp_event == "position_resp_event") {
       console.log(receivedUsername)
