@@ -20,8 +20,8 @@ if (username === null || username === "") {
     connection_status: connection_status
   };
   // websocket コネクション
-  // const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
-  const ws = new WebSocket('ws://localhost:8181/ws/test')
+  const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
+  //const ws = new WebSocket('ws://localhost:8181/ws/test')
 
   // Listen On WebSocket コネクション　Open
   ws.addEventListener('open', (event) => {
@@ -41,9 +41,9 @@ if (username === null || username === "") {
     const receivedRoomStatus = receivedData.room_status;
 
     if (resp_event == "init_resp_event") {
-      console.log(receivedUserList)
-      console.log(receivedUserList[receivedUserList.length-1]['username'])
-      if (receivedUserList[receivedUserList.length-1]['username'] == username) {
+      console.log(receivedUsername)
+
+      if (receivedUsername == username) {
         // receivedUserList の中にいるすべてのユーザを検索
         for (user in receivedUserList) {
           // 自分かどうかを確認
@@ -78,12 +78,12 @@ if (username === null || username === "") {
       } else {
         // 自分じゃなければ、他人のボロックを生成
         const newBox = document.createElement('div');
-        const newBoxId = receivedUserList[receivedUserList.length-1]['username'];
+        const newBoxId = receivedUsername;
         newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
         newBox.classList.add('newBox');
         newBox.style.backgroundColor = 'black';
-        newBox.style.left = receivedUserList[receivedUserList.length-1]["x"] * 10 + 'px';
-        newBox.style.top = receivedUserList[receivedUserList.length-1]["y"] * 10 + 'px';
+        newBox.style.left = receivedX * 10 + 'px';
+        newBox.style.top = receivedY * 10 + 'px';
         // newBox.style.zIndex = receivedClientList.length * 10;
         newBox.style.zIndex = 10;
         container.appendChild(newBox);
@@ -107,8 +107,8 @@ if (username === null || username === "") {
       newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
       newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
     } else if (resp_event == "del_event") {
-      console.log(receivedUsername, "=========================================")
-      console.log(receivedUs)
+      console.log(receivedUsername, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+      console.log(receivedData)
       var element = document.getElementById(receivedUsername);
       element.remove();
     }
