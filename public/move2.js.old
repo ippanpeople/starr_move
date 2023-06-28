@@ -20,7 +20,6 @@ if (username === null || username === "") {
     connection_status: connection_status
   };
   // websocket コネクション
-  // const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
   const ws = new WebSocket('ws://localhost:8282/ws/test')
 
   // Listen On WebSocket コネクション　Open
@@ -39,17 +38,17 @@ if (username === null || username === "") {
     const receivedX = receivedData.x;
     const receivedY = receivedData.y;
     const receivedRoomStatus = receivedData.room_status;
+    console.log("receivedData:" ,receivedData)
 
     if (resp_event == "init_resp_event") {
-      console.log(receivedUsername)
-
-      if (receivedUsername == username) {
+      if (receivedUsername == username){
         // receivedUserList の中にいるすべてのユーザを検索
         for (user in receivedUserList) {
           // 自分かどうかを確認
           if (receivedUserList[user]["username"] != username & receivedUserList[user]["connection_status"] == "connected") {
-            console.log("================", receivedUserList[user]["x"])
+            // console.log("================", receivedUserList[user]["x"])
             // 自分じゃなければ、他人のボロックを生成
+            
             const newBox = document.createElement('div');
             const newBoxId = receivedUserList[user]['username'];
             newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
@@ -60,7 +59,7 @@ if (username === null || username === "") {
             // newBox.style.zIndex = receivedClientList.length * 10;
             newBox.style.zIndex = 10;
             container.appendChild(newBox);
-          } else if (receivedData['username'] == username & receivedUserList[user]["username"] == username) {
+          } else if (receivedData['username']  == username & receivedUserList[user]["username"] == username){
             const myBox = document.createElement('div');
             const myBoxId = username;
             myBox.setAttribute('id', myBoxId); // 自分のブロックidを設置する
@@ -75,8 +74,9 @@ if (username === null || username === "") {
             console.log(receivedUserList);
           }
         }
-      } else {
-        // 自分じゃなければ、他人のボロックを生成
+      //--------------------------- 木村追加------------------------------
+      //新しいinitが来た時はその人だけ生成
+      }else {
         const newBox = document.createElement('div');
         const newBoxId = receivedUsername;
         newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
@@ -88,6 +88,7 @@ if (username === null || username === "") {
         newBox.style.zIndex = 10;
         container.appendChild(newBox);
       }
+      //-------------------------------------------------------------------
     } else if (resp_event == "position_resp_event") {
       console.log(receivedUsername)
       const targetUsername = receivedUsername;
@@ -107,7 +108,7 @@ if (username === null || username === "") {
       newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
       newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
     } else if (resp_event == "del_event") {
-      console.log(receivedUsername, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+      console.log(receivedUsername, "=========================================")
       console.log(receivedData)
       var element = document.getElementById(receivedUsername);
       element.remove();
