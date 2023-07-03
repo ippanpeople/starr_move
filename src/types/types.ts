@@ -18,9 +18,20 @@ export type Sprite = {
 };
 
 export type PlayerSprite = {
-	frame: number;
+	frames: {
+		max: number;
+		val: number;
+		elapsed: number;
+	};
 	width: number;
 	height: number;
+	isMove: boolean;
+	sprites: {
+		up: HTMLImageElement;
+		left: HTMLImageElement;
+		down: HTMLImageElement;
+		right: HTMLImageElement;
+	};
 } & Sprite;
 
 export type Boundary = {

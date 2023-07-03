@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import zoomedGameMapImage from "./assets/map/2d-game-map-zoomed.png";
-import playerDownImage from "./assets/character/playerDown.png";
-import { mapImage, playerImage } from "./constants/images";
+import playerUp from "./assets/character/playerUp.png";
+import playerLeft from "./assets/character/playerLeft.png";
+import playerDown from "./assets/character/playerDown.png";
+import playerRight from "./assets/character/playerRight.png";
+import { mapImage, playerDownImage, playerUpImage, playerLeftImage, playerRightImage } from "./constants/images";
 import { initialMapPos } from "./constants/position";
 import { useCanvasContext } from "./store/canvasContextState";
 import { useGameAnimate } from "./hooks/useGameAnimate";
@@ -30,24 +33,12 @@ function App() {
 			// get images
 			mapImage.src = zoomedGameMapImage;
 
-			playerImage.src = playerDownImage;
+			playerUpImage.src = playerUp;
+			playerLeftImage.src = playerLeft;
+			playerDownImage.src = playerDown;
+			playerRightImage.src = playerRight;
 
-			// to draw image to canvas, need to check image is loaded
-			mapImage.onload = () => {
-				canvasContext.drawImage(mapImage, initialMapPos.x, initialMapPos.y);
-				canvasContext.drawImage(
-					playerImage,
-					0,
-					0,
-					playerImage.width / 4, // cropping
-					playerImage.height,
-					CANVAS_WIDTH / 2 - playerImage.width / 4 / 2,
-					CANVAS_HEIGHT / 2 - playerImage.height / 2,
-					playerImage.width / 4,
-					playerImage.height
-				);
-				setIsLoadedAssets(true);
-			};
+			setIsLoadedAssets(true);
 		}
 	}, [canvasContext]);
 
