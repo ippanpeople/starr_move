@@ -12,9 +12,9 @@ export const useGameAnimate = () => {
 	const { boundaries, setBoundaries, drawBoundary } = useBoundary();
 	const { player, drawPlayer } = usePlayer();
 
+	drawBoundary();
 	drawBackground();
 	drawPlayer();
-	drawBoundary();
 
 	// この辺もっといい感じに描ける方法があるはず・・・（hoge.position.x += 3みたいに描きたいけどReactだとちょっといい方法現段階では思いつかなかった）
 	const mapAnimate = () => {
