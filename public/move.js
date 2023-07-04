@@ -1,6 +1,8 @@
 // 设置方块的初始位置
 let positionX = 0;
 let positionY = 0;
+let oX;
+let oY;
 let room_status = "exit";
 let connection_status = "connected";
 
@@ -40,11 +42,11 @@ if (username === null || username === "") {
     const receivedRoomStatus = receivedData.room_status;
 
     if (resp_event == "init_resp_event") {
-      if (receivedUsername == username){
+      if (receivedUsername == username) {
         // receivedUserList の中にいるすべてのユーザを検索
         for (user in receivedUserList) {
           // 自分かどうかを確認
-          if (receivedUserList[user]["username"] != username & receivedUserList[user]["connection_status"] == "connected") {
+          if (receivedUserList[user]["username"] != username && receivedUserList[user]["connection_status"] == "connected") {
             console.log("================", receivedUserList[user]["x"])
             // 自分じゃなければ、他人のボロックを生成
             const newBox = document.createElement('div');
@@ -53,11 +55,25 @@ if (username === null || username === "") {
             newBox.classList.add('newBox');
             newBox.style.backgroundColor = 'black';
             newBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
+            oX = receivedUserList[user]["x"]
             newBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
+            oY = receivedUserList[user]["y"]
             // newBox.style.zIndex = receivedClientList.length * 10;
             newBox.style.zIndex = 10;
+            /////////////////////////////////////////////////
+            // 創建圖片元素
+            const newImg = document.createElement('img');
+            newImg.setAttribute('id', newBoxId + "img"); // 自分のブロックidを設置する
+            newImg.src = '/public/img/ryou-01.png'; // 設置圖片路徑
+            newImg.style.width = '72px'; // 設置圖片寬度
+            newImg.style.height = '72px'; // 設置圖片高度
+            newImg.style.objectFit = 'cover'; // 確保圖片填滿容器
+
+            newBox.appendChild(newImg); // 將圖片元素添加到方塊中
+            /////////////////////////////////////////////////
+
             container.appendChild(newBox);
-          } else if (receivedData['username']  == username & receivedUserList[user]["username"] == username){
+          } else if (receivedData['username'] == username && receivedUserList[user]["username"] == username) {
             const myBox = document.createElement('div');
             const myBoxId = username;
             myBox.setAttribute('id', myBoxId); // 自分のブロックidを設置する
@@ -68,22 +84,45 @@ if (username === null || username === "") {
             myBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
             positionY = receivedUserList[user]["y"]
             myBox.style.zIndex = 20;
+            /////////////////////////////////////////////////
+            // 創建圖片元素
+            const myImg = document.createElement('img');
+            myImg.setAttribute('id', myBoxId + "img"); // 自分のブロックidを設置する
+            myImg.src = '/public/img/ryou-01.png'; // 設置圖片路徑
+            myImg.style.width = '72px'; // 設置圖片寬度
+            myImg.style.height = '72px'; // 設置圖片高度
+            myImg.style.objectFit = 'cover'; // 確保圖片填滿容器
+
+            myBox.appendChild(myImg); // 將圖片元素添加到方塊中
+            /////////////////////////////////////////////////
             container.appendChild(myBox);
             console.log(receivedUserList);
           }
         }
-      }else{
-        const myBox = document.createElement('div');
-        const myBoxId = username;
-        myBox.setAttribute('id', myBoxId); // 自分のブロックidを設置する
-        myBox.classList.add('myBox');
-        myBox.style.backgroundColor = 'red';
-        myBox.style.left = receivedUserList[user]["x"] * 10 + 'px';
-        positionX = receivedUserList[user]["x"]
-        myBox.style.top = receivedUserList[user]["y"] * 10 + 'px';
-        positionY = receivedUserList[user]["y"]
-        myBox.style.zIndex = 20;
-        container.appendChild(myBox);
+      } else {
+        // 自分じゃなければ、他人のボロックを生成
+        const newBox = document.createElement('div');
+        const newBoxId = receivedUsername;
+        newBox.setAttribute('id', newBoxId); // 自分のブロックidを設置する
+        newBox.classList.add('newBox');
+        newBox.style.backgroundColor = 'black';
+        newBox.style.left = receivedX * 10 + 'px';
+        newBox.style.top = receivedY * 10 + 'px';
+        // newBox.style.zIndex = receivedClientList.length * 10;
+        newBox.style.zIndex = 10;
+        /////////////////////////////////////////////////
+        // 創建圖片元素
+        const newImg = document.createElement('img');
+        newImg.setAttribute('id', myBoxId + "img"); // 自分のブロックidを設置する
+        newImg.src = '/public/img/ryou-01.png'; // 設置圖片路徑
+        newImg.style.width = '72px'; // 設置圖片寬度
+        newImg.style.height = '72px'; // 設置圖片高度
+        newImg.style.objectFit = 'cover'; // 確保圖片填滿容器
+
+        myBox.appendChild(newImg); // 將圖片元素添加到方塊中
+        /////////////////////////////////////////////////
+
+        container.appendChild(newBox);
         console.log(receivedUserList);
       }
     } else if (resp_event == "position_resp_event") {
@@ -101,9 +140,59 @@ if (username === null || username === "") {
       console.log(receivedData.user_list)
       console.log(receivedData.user_list[index])
       const newBox = document.getElementById(receivedUsername);
+      const newImg = document.getElementById(receivedUsername + "img");
 
       newBox.style.left = receivedData.user_list[index]["x"] * 10 + 'px';
       newBox.style.top = receivedData.user_list[index]["y"] * 10 + 'px';
+
+      if (oX > receivedData.user_list[index]["x"]) {
+        console.log("左")
+        if ((receivedData.user_list[index]["x"] + 1) % 3 == 1) {
+          newImg.src = '/public/img/ryou-10.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["x"] + 1) % 3 == 2) {
+          newImg.src = '/public/img/ryou-11.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["x"] + 1) % 3 == 0) {
+          newImg.src = '/public/img/ryou-12.png'; // 設置圖片路徑
+        }
+        oX = receivedData.user_list[index]["x"]
+        oY = receivedData.user_list[index]["y"]
+      } else if (oX < receivedData.user_list[index]["x"]) {
+        console.log("右")
+        if ((receivedData.user_list[index]["x"] + 1) % 3 == 1) {
+          newImg.src = '/public/img/ryou-07.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["x"] + 1) % 3 == 2) {
+          newImg.src = '/public/img/ryou-08.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["x"] + 1) % 3 == 0) {
+          newImg.src = '/public/img/ryou-09.png'; // 設置圖片路徑
+        }
+        oX = receivedData.user_list[index]["x"]
+        oY = receivedData.user_list[index]["y"]
+      } else if (oY > receivedData.user_list[index]["y"]) {
+        console.log("上")
+        if ((receivedData.user_list[index]["y"] + 1) % 3 == 1) {
+          newImg.src = '/public/img/ryou-04.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["y"] + 1) % 3 == 2) {
+          newImg.src = '/public/img/ryou-05.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["y"] + 1) % 3 == 0) {
+          newImg.src = '/public/img/ryou-06.png'; // 設置圖片路徑
+        }
+
+        oX = receivedData.user_list[index]["x"]
+        oY = receivedData.user_list[index]["y"]
+      } else if (oY < receivedData.user_list[index]["y"]) {
+        console.log("下")
+        if ((receivedData.user_list[index]["y"] + 1) % 3 == 1) {
+          newImg.src = '/public/img/ryou-01.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["y"] + 1) % 3 == 2) {
+          newImg.src = '/public/img/ryou-02.png'; // 設置圖片路徑
+        } else if ((receivedData.user_list[index]["y"] + 1) % 3 == 0) {
+          newImg.src = '/public/img/ryou-03.png'; // 設置圖片路徑
+        }
+
+        oX = receivedData.user_list[index]["x"]
+        oY = receivedData.user_list[index]["y"]
+      }
+
     } else if (resp_event == "del_event") {
       console.log(receivedUsername, "=========================================")
       console.log(receivedData)
@@ -150,22 +239,50 @@ if (username === null || username === "") {
 
   document.addEventListener('keydown', (event) => {
     const key = event.key;
-
+    const myImg = document.getElementById(username + "img");
     //　tableのぶつかる処理判定
     if (key === 'ArrowUp') {
       if (positionY != 48 | (positionY == 48 & positionX < 47) | (positionY == 48 & positionX > 51)) {
+        if ((positionY + 1) % 3 == 1) {
+          myImg.src = '/public/img/ryou-04.png'; // 設置圖片路徑
+        } else if ((positionY + 1) % 3 == 2) {
+          myImg.src = '/public/img/ryou-05.png'; // 設置圖片路徑
+        } else if ((positionY + 1) % 3 == 0) {
+          myImg.src = '/public/img/ryou-06.png'; // 設置圖片路徑
+        }
         positionY -= 1;
       }
     } else if (key === 'ArrowDown') {
       if (positionY != 41 | (positionY == 41 & positionX < 47) | (positionY == 41 & positionX > 51)) {
+        if ((positionY + 1) % 3 == 1) {
+          myImg.src = '/public/img/ryou-01.png'; // 設置圖片路徑
+        } else if ((positionY + 1) % 3 == 2) {
+          myImg.src = '/public/img/ryou-02.png'; // 設置圖片路徑
+        } else if ((positionY + 1) % 3 == 0) {
+          myImg.src = '/public/img/ryou-03.png'; // 設置圖片路徑
+        }
         positionY += 1;
       }
     } else if (key === 'ArrowLeft') {
       if (positionX != 52 | (positionX == 52 & positionY < 42) | (positionX == 52 & positionY > 47)) {
+        if ((positionX + 1) % 3 == 1) {
+          myImg.src = '/public/img/ryou-10.png'; // 設置圖片路徑
+        } else if ((positionX + 1) % 3 == 2) {
+          myImg.src = '/public/img/ryou-11.png'; // 設置圖片路徑
+        } else if ((positionX + 1) % 3 == 0) {
+          myImg.src = '/public/img/ryou-12.png'; // 設置圖片路徑
+        }
         positionX -= 1;
       }
     } else if (key === 'ArrowRight') {
       if (positionX != 46 | (positionX == 46 & positionY < 42) | (positionX == 46 & positionY > 47)) {
+        if ((positionX + 1) % 3 == 1) {
+          myImg.src = '/public/img/ryou-07.png'; // 設置圖片路徑
+        } else if ((positionX + 1) % 3 == 2) {
+          myImg.src = '/public/img/ryou-08.png'; // 設置圖片路徑
+        } else if ((positionX + 1) % 3 == 0) {
+          myImg.src = '/public/img/ryou-09.png'; // 設置圖片路徑
+        }
         positionX += 1;
       }
     }

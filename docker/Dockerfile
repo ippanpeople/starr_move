@@ -6,6 +6,7 @@ ADD requirements.txt .
 RUN /usr/local/bin/python -m pip install --upgrade pip
 # requirements.txtにリストされたパッケージをインストールする
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
+# RUN apt-get update && apt-get install -y curl
 
 
 CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8181"]
