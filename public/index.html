@@ -3,27 +3,45 @@
 
 <head>
     <style>
+        body {
+            margin: 0%;
+            padding: 0%;
+        }
+
+        img {
+            width: auto;
+            height: auto;
+            padding: 0%;
+            margin: 0%;
+            /* display: flex; */
+        }
+
         #container .table {
             width: 50px;
             height: 60px;
-            background-color: rgb(208, 106, 4); /* 或者设置其他背景颜色 */
+            background-color: rgba(208, 106, 4, 0);
+            /* 或者设置其他背景颜色 */
             position: absolute;
             top: 420px;
             left: 470px;
             z-index: 5;
         }
+
         #container .table_area {
             width: 90px;
             height: 100px;
-            background-color: rgb(180, 171, 171); /* 或者设置其他背景颜色 */
+            background-color: rgba(180, 171, 171, 0);
+            /* 或者设置其他背景颜色 */
             position: absolute;
             top: 400px;
             left: 450px;
             z-index: 0;
         }
+
         .myBox {
             width: 10px;
             height: 10px;
+            border-radius: 999em;
             /* 其他样式属性 */
             position: absolute;
         }
@@ -31,18 +49,55 @@
         .newBox {
             width: 10px;
             height: 10px;
+            border-radius: 999em;
             /* 其他样式属性 */
             position: absolute;
+        }
+
+        #bar_door {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            left: 10px;
+            top: 64px;
+            /* 初始时隐藏图像 */
+            display: none;
+        }
+
+        #room {
+            position: absolute;
+            background-image: url(/public/img/bar-door.png);
+            width: 84px;
+            height: 84px;
+            left: 714px;
+            top: 426px;
+            opacity: 0;
+        }
+        #bar {
+            position: absolute;
+            background-image: url(/public/img/bar-door.png);
+            width: 84px;
+            height: 84px;
+            left: 66px;
+            top: 66px;
+            opacity: 0;
         }
     </style>
 </head>
 
 <body>
+    <img src="/public/img/lobby.png" alt="">
+    <!-- <div id="bar_door_container">
+        <img id="bar_door" src="/public/img/bar-door.png">
+    </div> -->
     <div id="container">
         <div class="table"></div>
         <div class="table_area"></div>
     </div>
+    <div id="bar"></div>
+    <div id="room"></div>
     <script src="/public/move.js"></script>
+    <script src="/public/door.js"></script>
     <!-- <script src="move.js"></script> -->
 </body>
 

@@ -8,6 +8,8 @@ import asyncio
 app = FastAPI()
 client_list = []
 user_list = []
+disconnected_user_list = []
+
 # 导入静态文件夹中的 HTML 和 JS 文件
 app.mount("/public", StaticFiles(directory="public"), name="public")
 
@@ -46,7 +48,9 @@ async def websocket_endpoint(ws: WebSocket):
                 # "x": data['x'],
                 # "y": data['y'],
                 "room_status": data['room_status'],
-                "connection_status": data['connection_status']
+                "connection_status": data['connection_status'],
+                "key_status": data['key_status'],
+                "o_key": data['o_key']
             }
             # user = {
             #     "username": data['username'],
@@ -65,30 +69,22 @@ async def websocket_endpoint(ws: WebSocket):
             if data["event"] == "init_event":
 
                 target_username = data['username']
-                index = 0
-                for i, user_dict in enumerate(user_list):
-                    if user_dict['username'] == target_username:
-                        index = i
-                        break
 
-                if user['username'] not in [u['username'] for u in user_list]:
+                # if user['username'] not in [u['username'] for u in user_list]:
+                if user['username'] not in [u['username'] for u in disconnected_user_list]:
                     user = {
                         "username": data['username'],
-                        "x": 0,
-                        "y": 0,
+                        "x": 21,
+                        "y": 25,
                         "room_status": data['room_status'],
-                        "connection_status": data['connection_status']
+                        "connection_status": data['connection_status'],
+                        "key_status": data['key_status'],
+                        "o_key": data['o_key']
                     }
                     user_list.append(user)
                     print(user_list)
-                else:
-                    user_list[index]['connection_status'] = "connected"
-
-                # print(str(index) + "=============================")
-                for client in client_list:
-                    client_key = hex(id(client))
-
-                    if user not in user_list:
+                    for client in client_list:
+                        client_key = hex(id(client))
                         await client.send_json({
                             "resource": "server response 200",
                             "event": "init_resp_event",
@@ -97,12 +93,34 @@ async def websocket_endpoint(ws: WebSocket):
                             "client_key": hex(id(client)),
                             "user_list": user_list,
                             "username": data['username'],
-                            "x": 0,
-                            "y": 0,
-                            "room_status": user_list[index]['room_status'],
+                            "x": 21,
+                            "y": 25,
+                            "room_status": user['room_status'],
+                            "key_status": data['key_status'],
+                            "o_key": data['o_key'],
                             "message": f"client { data['username'] } is initialized",
                         })
-                    else:
+                else:
+                    index = 0
+                    for i, dis_user_dict in enumerate(disconnected_user_list):
+                        if dis_user_dict['username'] == target_username:
+                            index = i
+                            break
+
+                    user = {
+                        "username": data['username'],
+                        "x": disconnected_user_list[index]['x'],
+                        "y": disconnected_user_list[index]['y'],
+                        "room_status": data['room_status'],
+                        "connection_status": data['connection_status'],
+                        "key_status": data['key_status'],
+                        "o_key": data['o_key']
+                    }
+                    disconnected_user_list.pop(index)
+                    user_list.append(user)
+
+                    for client in client_list:
+                        client_key = hex(id(client))
                         await client.send_json({
                             "resource": "server response 200",
                             "event": "init_resp_event",
@@ -114,8 +132,46 @@ async def websocket_endpoint(ws: WebSocket):
                             "x": user_list[index]['x'],
                             "y": user_list[index]['y'],
                             "room_status": user_list[index]['room_status'],
+                            "key_status": data['key_status'],
+                            "o_key": data['o_key'],
                             "message": f"client { data['username'] } is initialized",
                         })
+
+                # else:
+                #     user_list[index]['connection_status'] = "connected"
+
+                # print(str(index) + "=============================")
+                # for client in client_list:
+                #     client_key = hex(id(client))
+
+                #     if user not in user_list:
+                #         await client.send_json({
+                #             "resource": "server response 200",
+                #             "event": "init_resp_event",
+                #             "client_list": [hex(id(c)) for c in client_list],
+                #             "client_num": len(user_list),
+                #             "client_key": hex(id(client)),
+                #             "user_list": user_list,
+                #             "username": data['username'],
+                #             "x": 0,
+                #             "y": 0,
+                #             "room_status": user_list[index]['room_status'],
+                #             "message": f"client { data['username'] } is initialized",
+                #         })
+                #     else:
+                #         await client.send_json({
+                #             "resource": "server response 200",
+                #             "event": "init_resp_event",
+                #             "client_list": [hex(id(c)) for c in client_list],
+                #             "client_num": len(user_list),
+                #             "client_key": hex(id(client)),
+                #             "user_list": user_list,
+                #             "username": data['username'],
+                #             "x": user_list[index]['x'],
+                #             "y": user_list[index]['y'],
+                #             "room_status": user_list[index]['room_status'],
+                #             "message": f"client { data['username'] } is initialized",
+                #         })
 
             elif data['event'] == "position_event":
 
@@ -129,6 +185,9 @@ async def websocket_endpoint(ws: WebSocket):
                 user_list[index]['x'] = data['x']
                 user_list[index]['y'] = data['y']
                 user_list[index]['room_status'] = data['room_status']
+                user_list[index]['key_status'] = data['key_status']
+                user_list[index]["o_key"]= data['o_key']
+
                 for client in client_list:
                     client_key = hex(id(client))
                     await client.send_json({
@@ -142,6 +201,8 @@ async def websocket_endpoint(ws: WebSocket):
                         "x": user_list[index]['x'],
                         "y": user_list[index]['y'],
                         "room_status": user_list[index]['room_status'],
+                        "key_status": user_list[index]['key_status'],
+                        "o_key": user_list[index]['o_key'],
                         "message": f"client { data['username'] } is moved",
                     })
 
@@ -172,7 +233,14 @@ async def websocket_endpoint(ws: WebSocket):
                 "message": f"client { user_list[index]['username'] } is disconnected",
             })
         # print(user_list[index])
-        # user_list.remove(user_list[index])
+        disconnected_user_list.append({
+            "username": user_list[index]['username'],           
+            "x": user_list[index]['x'],
+            "y": user_list[index]['y'],
+            "room_status": user_list[index]['room_status'],
+            "connection_status": user_list[index]['connection_status'],
+        })
+        user_list.remove(user_list[index])
 
 
         print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
