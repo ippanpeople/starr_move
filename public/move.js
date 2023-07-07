@@ -3,7 +3,6 @@ let positionX = 0;
 let positionY = 0;
 let room_status = "exit";
 let connection_status = "connected";
-
 // user account
 var username = prompt("usernameを入力：");
 

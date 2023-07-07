@@ -9,6 +9,7 @@ import (
 	"github.com/rs/xid"
 )
 
+
 type SendMessage struct {
 	Resource string `json:"resource"`
 	Event string `json:"event"`
@@ -21,6 +22,9 @@ type SendMessage struct {
 	X          int `json:"x"`
 	Y          int `json:"y"`
 	Room_status	string `json:"room_status"`
+	Room_name string `json:"room_name"`
+	WebRTCRoomname string `json:"webRTCRoomname"`
+	WebRTCId string `json:"webRTCId"`
 	Connection_status string `json:"connection_status"`
 	Message string `json:"message"` 
 }
@@ -54,7 +58,6 @@ func main() {
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
-
 	//websocketへのルーティング
 	http.HandleFunc("/ws/test", handleConnections)
 	log.Println("http server started on :8282")
@@ -75,7 +78,6 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	
-	
 	guid := xid.New()
 	clientkey = guid.String()
 
@@ -91,6 +93,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		var data SendMessage
 
 		err := ws.ReadJSON(&data)
+
 		if err != nil {
             log.Printf("error: %v", err)
 			log.Printf("reciveMess: error")
@@ -153,6 +156,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				X : x,
 				Y : y,
 				Room_status: us.user_list[i]["room_status"].(string),
+				Room_name: "loby",
+				WebRTCId: data.WebRTCId,
 				Message : "client " + data.Username + " is initialized",
 			}
 			broadcast(m)
@@ -165,6 +170,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			us.user_list[i]["x"] = data.X
 			us.user_list[i]["y"] = data.Y
 			us.user_list[i]["room_status"] = data.Room_status
+			us.user_list[i]["webRTCRoomname"] = data.WebRTCRoomname
+			us.user_list[i]["webRTCId"] = data.WebRTCId
 
 			fmt.Println("us",us.user_list)
 
@@ -229,6 +236,7 @@ func broadcast(m SendMessage){
 		}
 	}
 }
+
 //user_listからclientkeyでindexを検索する
 func searchUsername(clientkey string)(int){
 	for i,u := range us.user_list{
