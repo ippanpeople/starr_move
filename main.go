@@ -156,7 +156,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 				X : x,
 				Y : y,
 				Room_status: us.user_list[i]["room_status"].(string),
-				Room_name: "loby",
+				Room_name: "lobby",
 				WebRTCId: data.WebRTCId,
 				Message : "client " + data.Username + " is initialized",
 			}

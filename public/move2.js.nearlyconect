@@ -122,15 +122,13 @@ if (username === null || username === "") {
           // break;
         }
         //追加
-        if(webRTCRoomname == "lobby"){
-          if(userDict.connection_status ==  "connected"){
-            if(positionX <= 25 && positionY <= 14 &&positionX >= 5 && positionY >= 4){
+        if(userDict.connection_status ==  "connected"){
+          if(Math.abs(positionX - userDict.x) < 5 && Math.abs(positionY - userDict.y) < 5){
+            if(webRTCId != userDict.webRTCId){
               console.log(userDict.username)
               vChatUser.push(userDict.webRTCId)
             }
-          }else if(positionX >= 40 && positionY <= 4 && positionX <= 27 && positionY >= 9){
-            console.log(userDict.username)
-            vChatUser.push(userDict.webRTCId)
+      
           }
         }
         ///////
@@ -149,7 +147,7 @@ if (username === null || username === "") {
 
       let deleteVchatUser = preVChatUser.filter(u => !vChatUser.includes(u));
       let createVChatUser =  vChatUser.filter(u => !preVChatUser.includes(u));
-      if(webRTCRoomname == "lobby"){
+      if(webRTCRoomname == "loby"){
         console.log(deleteVchatUser)
         createVChatUser.forEach(
           delMediaId => {
@@ -197,6 +195,7 @@ if (username === null || username === "") {
 
             // オーディオ要素を非表示にする
             const atag = document.querySelector("#remote-media-area audio[id='" + delMediaId + "']");
+            
             atag.volume = 0
 
           }
@@ -383,7 +382,7 @@ const token = new SkyWayAuthToken({
         await me.publish(audio);
         await me.publish(video);
         let subscribeAndAttach  = null
-        if (webRTCRoomname == "lobby"){
+        if (webRTCRoomname == "loby"){
           subscribeAndAttach = (publication) => {
               if (publication.publisher.id === me.id) return;
 
@@ -452,7 +451,7 @@ const token = new SkyWayAuthToken({
                     newMedia.id = publication.publisher.id
 
                     newMedia.hidden = false
-
+                    
                     break;
                 default:
                     return;
