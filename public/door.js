@@ -28,10 +28,10 @@ bar.addEventListener('mouseleave', () => {
 
 }, false);
 
-document.getElementById("bar").addEventListener("click", function() {
-    // 在这里执行点击事件的处理逻辑
-    // 重定向到指定的网址
-    var url = "https://starr_move_bar.rinlink.jp?username=" + encodeURIComponent(username);
-    window.location.href = url;
-    console.log(username)
-  });
+// document.getElementById("bar").addEventListener("click", function() {
+//     // 在这里执行点击事件的处理逻辑
+//     // 重定向到指定的网址
+//     var url = "https://starr_move_bar.rinlink.jp?username=" + encodeURIComponent(username);
+//     window.location.href = url;
+//     console.log(username)
+//   });

@@ -12,7 +12,18 @@ let connection_status = "connected";
 let key_status = "up";
 
 // user account
-var username = prompt("usernameを入力：");
+var username;
+// 获取当前页面的 URL
+var url = new URL(window.location.href);
+// 获取参数部分
+var searchParams = new URLSearchParams(url.search);
+
+var username_check = searchParams.get("username");
+if(username_check == null || username_check == ""){
+  username = prompt("usernameを入力：");
+}else{
+  username = username_check;
+}
 
 // チェック client_key がnullかどうか
 if (username === null || username === "") {
@@ -334,6 +345,15 @@ if (username === null || username === "") {
         myImg.src = '/public/img/ryou-06.png'; // 設置圖片路徑
       }
       //////////////////アニメーション用//////////////////
+      if(positionX == 3 && positionY == 4){
+        var url = "https://starr_move_bar.rinlink.jp?username=" + encodeURIComponent(username);
+        window.location.href = url;
+        console.log("sdfghjkliuhygfvbnmjkhgfcvbnmkjhgabwnjkesfkjbksnldfbjknaslkfbkawnlfnnslfl")
+      }else if(positionX == 30 && positionY == 19){
+        var url = "https://starr_move_room.rinlink.jp?username=" + encodeURIComponent(username);
+        window.location.href = url;
+        console.log("sdfghjkliuhygfvbnmjkhgfcvbnmkjhgabwnjkesfkjbksnldfbjknaslkfbkawnlfnnslfl")
+      }
 
       if (
         (positionX >= 3 && positionX <= 5 && positionY >= 5 && positionY <= 23) ||

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import HTMLResponse
 import json
@@ -18,6 +18,17 @@ app.mount("/public", StaticFiles(directory="public"), name="public")
 async def read_index():
     # 返回导入的 HTML 文件
     return HTMLResponse(content=open("public/index.html").read(), status_code=200)
+
+@app.get("/")
+async def read_index(request: Request, response: Response):
+    # 获取请求的查询字符串参数
+    username = request.query_params.get("username")
+    
+    # 返回导入的 HTML 文件，并在其中插入 username
+    content = open("public/index.html").read()
+    content_with_username = content.replace("{{username}}", username)
+    
+    return HTMLResponse(content=content_with_username, status_code=200)
 
 
 @app.websocket("/ws/test")
@@ -129,9 +140,9 @@ async def websocket_endpoint(ws: WebSocket):
                             "client_key": hex(id(client)),
                             "user_list": user_list,
                             "username": data['username'],
-                            "x": user_list[index]['x'],
-                            "y": user_list[index]['y'],
-                            "room_status": user_list[index]['room_status'],
+                            "x": user_list[-1]['x'],
+                            "y": user_list[-1]['y'],
+                            "room_status": user_list[-1]['room_status'],
                             "key_status": data['key_status'],
                             "o_key": data['o_key'],
                             "message": f"client { data['username'] } is initialized",
@@ -232,7 +243,7 @@ async def websocket_endpoint(ws: WebSocket):
                 "username": user_list[index]['username'],
                 "message": f"client { user_list[index]['username'] } is disconnected",
             })
-        # print(user_list[index])
+        print(user_list[index])
         disconnected_user_list.append({
             "username": user_list[index]['username'],           
             "x": user_list[index]['x'],
