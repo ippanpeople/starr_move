@@ -285,7 +285,7 @@ if (username === null || username === "") {
               console.log("atag")
 
               console.log(atag)
-              atag.volume = 0
+              atag.volume = 1
 
             }
 
@@ -757,10 +757,10 @@ const token = new SkyWayAuthToken({
                       newMedia = document.createElement('audio');
                       newMedia.controls = false;
                       newMedia.autoplay = false;
-                      newMedia.volume = 0
+                      newMedia.volume = 1
                       newMedia.id = publication.publisher.id + "audio"
 
-                      // newMedia.hidden = true
+                      newMedia.hidden = true
                       
                       break;
                   default:
@@ -789,7 +789,7 @@ const token = new SkyWayAuthToken({
                     newMedia = document.createElement('video');
                     newMedia.playsInline = true;
                     newMedia.autoplay = true;
-                    newMedia.id = publication.publisher.id
+                    newMedia.id = publication.publisher.id + "video"
                     newMedia.height = 150
                     newMedia.style.float = "left"
                     newMedia.style.border =" solid 1px #1E223B"
@@ -802,11 +802,10 @@ const token = new SkyWayAuthToken({
                     newMedia = document.createElement('audio');
                     newMedia.controls = true;
                     newMedia.autoplay = true;
-                    newMedia.muted = true
-                    // newMedia.volume = 1
-                    newMedia.id = publication.publisher.id
+                    newMedia.volume = 1
+                    newMedia.id = publication.publisher.id +  "audio"
 
-                    newMedia.hidden = true
+                    // newMedia.hidden = true
 
                     break;
                 default:
