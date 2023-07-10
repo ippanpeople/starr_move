@@ -1,0 +1,39 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.grid-container {
+  position: relative;
+  min-width: 1440px;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+nav {
+  position: fixed;
+  z-index: 10;
+  right: 0;
+  top: 0;
+  width: 30%;
+  height: 100%;
+  background-color: #faebd7;
+}
+
+section {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(158, 208, 208);
+}
+
+footer {
+  position: fixed;
+  z-index: 500;
+  bottom: 0;
+  width: 100%;
+  height: 10%;
+  background-color: rgb(75, 111, 112);
+}
