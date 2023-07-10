@@ -56,6 +56,7 @@ async def websocket_endpoint(ws: WebSocket):
 
             user = {
                 "username": data['username'],
+                "cname": data['cname'],
                 # "x": data['x'],
                 # "y": data['y'],
                 "room_status": data['room_status'],
@@ -85,6 +86,7 @@ async def websocket_endpoint(ws: WebSocket):
                 if user['username'] not in [u['username'] for u in disconnected_user_list]:
                     user = {
                         "username": data['username'],
+                        "cname": data['cname'], 
                         "x": 21,
                         "y": 25,
                         "room_status": data['room_status'],
@@ -104,6 +106,7 @@ async def websocket_endpoint(ws: WebSocket):
                             "client_key": hex(id(client)),
                             "user_list": user_list,
                             "username": data['username'],
+                            "cname": data['cname'],
                             "x": 21,
                             "y": 25,
                             "room_status": user['room_status'],
@@ -120,6 +123,7 @@ async def websocket_endpoint(ws: WebSocket):
 
                     user = {
                         "username": data['username'],
+                        "cname": data['cname'],
                         "x": disconnected_user_list[index]['x'],
                         "y": disconnected_user_list[index]['y'],
                         "room_status": data['room_status'],
@@ -140,6 +144,7 @@ async def websocket_endpoint(ws: WebSocket):
                             "client_key": hex(id(client)),
                             "user_list": user_list,
                             "username": data['username'],
+                            "cname": data['cname'],
                             "x": user_list[-1]['x'],
                             "y": user_list[-1]['y'],
                             "room_status": user_list[-1]['room_status'],
@@ -193,6 +198,7 @@ async def websocket_endpoint(ws: WebSocket):
                     if user_dict['username'] == target_username:
                         index = i
                         break
+                user_list[index]['cname'] = data['cname']
                 user_list[index]['x'] = data['x']
                 user_list[index]['y'] = data['y']
                 user_list[index]['room_status'] = data['room_status']
@@ -209,6 +215,7 @@ async def websocket_endpoint(ws: WebSocket):
                         "client_key": hex(id(client)),
                         "user_list": user_list,
                         "username": data['username'],
+                        "cname": data['cname'],
                         "x": user_list[index]['x'],
                         "y": user_list[index]['y'],
                         "room_status": user_list[index]['room_status'],
@@ -245,7 +252,8 @@ async def websocket_endpoint(ws: WebSocket):
             })
         print(user_list[index])
         disconnected_user_list.append({
-            "username": user_list[index]['username'],           
+            "username": user_list[index]['username'], 
+            "cname": user_list[index]['cname'],
             "x": user_list[index]['x'],
             "y": user_list[index]['y'],
             "room_status": user_list[index]['room_status'],
