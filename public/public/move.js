@@ -7,7 +7,7 @@ let vChatUser = []
 let webRTCId = ""
 let webRTCRoomname = ""
 let preVChatUser = []
-
+let webRTCUser_list = null
 
 
 //////////////////アニメーション用//////////////////
@@ -61,6 +61,7 @@ if (username === null || username === "") {
     const receivedData = JSON.parse(event.data);
     const resp_event = receivedData['event']
     const receivedUserList = receivedData.user_list;
+    webRTCUser_list = receivedUserList
     const receivedUsername = receivedData.username;
     const receivedX = receivedData.x;
     const receivedY = receivedData.y;
@@ -68,6 +69,9 @@ if (username === null || username === "") {
     //追加
     const receivedRoomname = receivedData.room_name
     const receivedWebRTCId = receivedData.webRTCId
+    const receivedWebRTCMute = receivedData.webRTCMute
+    console.log(receivedWebRTCMute)
+
 
     console.log(receivedData)
 
@@ -282,9 +286,26 @@ if (username === null || username === "") {
         createVChatUser.forEach(
           delMediaId => {
             const vtag = document.querySelectorAll("#remote-media-area video[id='" + delMediaId + 'video' + "']");
+            const dtag = document.querySelectorAll("#remote-media-area dev[id='" + delMediaId + "']");
+
+            const nametag = document.querySelectorAll("#remote-media-area h1[id='" + delMediaId + 'nametag' +  "']");
+
+            nametag.forEach(
+              namet => {
+                namet.hidden = false
+            })
+
+            dtag.forEach(
+              dev => {
+                dev.style.height = "114.5px"
+                dev.style.width = "152px"
+              }
+            )
+
             vtag.forEach(video => {
               // video.style.display = "none";
               video.hidden = false
+            
             });
 
             // オーディオ要素を非表示にする
@@ -305,6 +326,21 @@ if (username === null || username === "") {
           delMediaId => {
             console
             const vtag = document.querySelectorAll("#remote-media-area video[id='" + delMediaId + 'video' + "']");
+            const dtag = document.querySelectorAll("#remote-media-area dev[id='" + delMediaId + "']");
+            const nametag = document.querySelectorAll("#remote-media-area h1[id='" + delMediaId + 'nametag' +  "']");
+
+            nametag.forEach(
+              namet => {
+                namet.hidden = true
+            })
+
+            
+            dtag.forEach(
+              dev => {
+                dev.style.height = "0px"
+                dev.style.width = "0px"
+              }
+            )
             vtag.forEach(video => {
               // video.style.display = "none";
               video.hidden = true
@@ -315,7 +351,6 @@ if (username === null || username === "") {
             console.log(atag)
 
             atag.volume = 0
-
           }
         )
       }
@@ -402,7 +437,24 @@ if (username === null || username === "") {
       console.log(videoElement)
       element.remove();
       videoElement.hidden = true
+      ///////////////////////////////追加/////////////////////////////
+    }else if (resp_event == "mute_resp_event"){
+      if(receivedWebRTCId != webRTCId){
+        console.log("webrtcMUte")
+        console.log(receivedWebRTCMute)
+        if(receivedWebRTCMute){
+          videotag = document.getElementById(receivedWebRTCId+"video")
+          videotag.style.opacity = 0
+        }else{
+          videotag = document.getElementById(receivedWebRTCId+"video")
+          videotag.style.opacity = 1
+        }
+      }
+      
+   
+
     }
+    /////////////////////////////
   });
 
   // Listen On WebSocket Error
@@ -623,6 +675,46 @@ if (username === null || username === "") {
     console.log("X:", positionX, "Y:", positionY)
     requestAnimationFrame(moveMyBox);
   });
+
+  //追加webrtc
+  videoMuteButton.addEventListener('click',() => {
+    console.log(videoPublication)
+      const positionData = {
+        event: "mute_event",
+        username: username,
+        x: positionX,
+        y: positionY,
+        room_status: "entry",
+        connection_status: connection_status,
+        key_status: key_status,
+        webRTCId:webRTCId,
+        webRTCMute:videoMute,
+        o_key: oKey
+      };
+      videoMute = !videoMute
+      console.log(positionData)
+      ws.send(JSON.stringify(positionData))
+      console.log(audioPublication)
+    // for( var i = 0;  i < 1;  i++){
+    //   if(videoMute){
+    //     console.log("解除")
+    //     videoMute = false
+    //     // videoPublication.replaceStream()
+    //     videoPublication.disable()
+  
+    //   }else{
+    //     console.log("接続")
+    //     videoMute = true
+    //     videoPublication.enable()
+    //   }
+    // }
+  })
+
+
+
+
+
+
 }
 
 function playAudio() {
@@ -644,20 +736,9 @@ let videoMute = true
 let audioMute = true
 
 let localStream = null
-videoMuteButton.addEventListener('click',() => {
-  console.log(videoPublication)
-  if(videoMute){
-    console.log("解除")
-    videoMute = false
-    videoPublication.disable()
-  }else{
-    console.log("接続")
-    videoMute = true
-    videoPublication.enable()
-  }
-})
+
 audioMuteButton.addEventListener('click',() => {
-  console.log(audioPublication)
+
   if(audioMute){
     console.log("audio解除")
     audioMute = false
@@ -803,6 +884,33 @@ const token = new SkyWayAuthToken({
 
                   switch (stream.track.kind) {
                   case 'video':
+                      wapper_dev = document.createElement('dev');
+                      wapper_dev.classList.add("video_wrapper")
+                      wapper_dev.style.backgroundColor = "black"
+                      // wapper_dev.style.height = "114.5px"
+                      // wapper_dev.style.width = "152px"
+                      // wapper_dev.style.float = "left"
+                      wapper_dev.style.display = "inline-block"
+                      wapper_dev.style.border =" solid 1px #1E223B"
+                      wapper_dev.style.borderRadius = "10px 10px 10px 10px"
+                      wapper_dev.style.marginLeft = "10px"
+                      wapper_dev.id = publication.publisher.id
+                      wapper_dev.style.height = "0px"
+                      wapper_dev.style.width = "0px"
+
+                      nametag = document.createElement('h1')
+                      nametag.style.position = "relative"
+                      nametag.style.top = "100px"
+                      nametag.display = "block"
+                      nametag.hidden = true
+                      nametag.id = publication.publisher.id + "nametag"
+
+                      
+                        
+                      
+                      
+
+
                       newMedia = document.createElement('video');
                       newMedia.playsInline = true;
                       newMedia.autoplay = true;
@@ -810,10 +918,20 @@ const token = new SkyWayAuthToken({
                       newMedia.width = 150
                       newMedia.style.float = "left"
                       newMedia.style.border =" solid 1px #1E223B"
-                      newMedia.style.marginLeft = "10px"
                       newMedia.style.borderRadius = "10px 10px 10px 10px"
                       newMedia.id = publication.publisher.id + "video"
+                      newMedia.style.background = "black"
+                      wapper_dev.appendChild(newMedia)
+                      webRTCUser_list.forEach(u => {
+                        if(u.webRTCId == publication.publisher.id){
+                          nametag.textContent = u.username
+                          remoteMediaArea.appendChild(nametag)
+                        }
+                      })
+                      remoteMediaArea.appendChild(wapper_dev);
+
                       break;
+
                   case 'audio':
                       newMedia = document.createElement('audio');
                       newMedia.controls = false;
@@ -822,13 +940,16 @@ const token = new SkyWayAuthToken({
                       newMedia.id = publication.publisher.id + "audio"
 
                       newMedia.hidden = true
-                      
+                      remoteMediaArea.appendChild(newMedia);
+
+
                       break;
                   default:
                       return;
                   }
                   stream.attach(newMedia);
-                  remoteMediaArea.appendChild(newMedia);
+
+
               })();
           };
         }else if(webRTCRoomname == "setumeikai"){
@@ -844,7 +965,8 @@ const token = new SkyWayAuthToken({
                 const { stream } = await me.subscribe(publication.id);
                 
                 let newMedia;
-
+                const dev = createElement("dev")
+                
                 switch (stream.track.kind) {
                 case 'video':
                     newMedia = document.createElement('video');
@@ -852,7 +974,7 @@ const token = new SkyWayAuthToken({
                     newMedia.autoplay = true;
                     newMedia.id = publication.publisher.id + "video"
                     newMedia.height = 150
-                    newMedia.style.float = "left"
+                    // newMedia.style.float = "left"
                     newMedia.style.border =" solid 1px #1E223B"
                     newMedia.style.marginLeft = "10px"
                     newMedia.style.borderRadius = "10px 10px 10px 10px"
@@ -873,6 +995,7 @@ const token = new SkyWayAuthToken({
                     return;
                 }
                 stream.attach(newMedia);
+                
                 remoteMediaArea.appendChild(newMedia);
             })();
           };

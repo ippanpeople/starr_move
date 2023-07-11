@@ -25,6 +25,7 @@ type SendMessage struct {
 	Room_name string `json:"room_name"`
 	WebRTCRoomname string `json:"webRTCRoomname"`
 	WebRTCId string `json:"webRTCId"`
+	WebRTCMute bool `json:"webRTCMute"`
 	Connection_status string `json:"connection_status"`
 	Message string `json:"message"` 
 }
@@ -202,6 +203,25 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		}else if data.Event == "healthcheck_resp_event"{
 			health_check_count[data.Client_key] = 0
 			fmt.Println("client key:",data.Client_key,"  health_ckeck_count",health_check_count[clientkey])
+		}else if data.Event == "mute_event"{
+			i := us.userIndex(data.Username)
+
+			m := SendMessage{
+				Resource: "server request 200",
+				Event: "mute_resp_event",
+				Client_list: us.user_list,
+				Client_num: len(us.user_list),
+				Client_key: clientkey,
+				User_list : us.user_list,
+				Username: data.Username,
+				X : data.X,
+				Y :data.Y,
+				WebRTCId: data.WebRTCId,
+				WebRTCMute: data.WebRTCMute,
+				Message : "client " + data.Username + " is moved",
+			}
+			fmt.Println(us.user_list[i]["room_status"].(string))
+			broadcast(m)
 		}
 
 		fmt.Println("!!!!!!!!!!!!!!!!loop end!!!!!!!!!!!!")
