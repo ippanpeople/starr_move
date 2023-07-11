@@ -1,9 +1,12 @@
-const room = document.getElementById('room');
 const bar = document.getElementById('bar');
+const bar_chat = document.getElementById('bar_chat');
+const room = document.getElementById('room');
+const room_chat = document.getElementById('room_chat');
 //マウスが要素上に入った時
 room.addEventListener('mouseover', () => {
     console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
     room.style.opacity = 1;
+    room_chat.style.opacity = 1;
 
 }, false);
 
@@ -11,6 +14,7 @@ room.addEventListener('mouseover', () => {
 room.addEventListener('mouseleave', () => {
 
     room.style.opacity = 0;
+    room_chat.style.opacity = 0;
 
 }, false);
 
@@ -18,6 +22,7 @@ room.addEventListener('mouseleave', () => {
 bar.addEventListener('mouseover', () => {
 
     bar.style.opacity = 1;
+    bar_chat.style.opacity = 1;
 
 }, false);
 
@@ -25,6 +30,7 @@ bar.addEventListener('mouseover', () => {
 bar.addEventListener('mouseleave', () => {
 
     bar.style.opacity = 0;
+    bar_chat.style.opacity = 0;
 
 }, false);
 
