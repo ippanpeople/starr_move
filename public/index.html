@@ -15,7 +15,6 @@
 
       .container {
         position: relative;
-        min-width: 1440px;
         width: 100vw;
         height: 100vh;
       }
@@ -95,9 +94,72 @@
         position: fixed;
         z-index: 500;
         bottom: 0;
+        min-width: 1200px;
         width: 100%;
         height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         background-color: #4b6396;
+      }
+
+      .footer-setting {
+        display: flex;
+        margin: 0 10px;
+      }
+
+      .footer-setting-item {
+        width: 40px;
+        height: 40px;
+        margin: 0 5px;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background-color: #fff;
+      }
+
+      .footer-mySetting {
+        position: relative;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        gap: 20px;
+        border-radius: 8px;
+        background-color: #fff;
+        color: #11223c;
+        font-weight: bold;
+      }
+
+      .footer-mySetting > img {
+        width: 32px;
+        height: 32px;
+      }
+
+      .footer-mySetting > span::before {
+        content: "";
+        height: 30px;
+        width: 4px;
+        display: block;
+        border-radius: 8px;
+        background-color: #11223c;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50px;
+        margin: auto;
+      }
+
+      .footer-setting-leave {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #11223c;
+        color: #fff;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -144,7 +206,23 @@
       <section>
         <div id="section-overflow"><img src="/public/img/lobby.png" /></div>
       </section>
-      <footer>footer</footer>
+
+      <footer>
+        <div class="footer-setting">
+          <div class="footer-setting-item"></div>
+          <div class="footer-mySetting"><img src="/public/img/mySetting.png" alt="" /><span>坂口健太郎</span></div>
+          <div class="footer-setting-item"><img src="/public/img/mic.svg" alt="" /></div>
+          <div class="footer-setting-item"><img src="/public/img/camera.svg" alt="" /></div>
+          <div class="footer-setting-item"><img src="/public/img/tv.svg" alt="" /></div>
+          <div class="footer-setting-item"><img src="/public/img/face.svg" alt="" /></div>
+        </div>
+
+        <div class="footer-setting">
+          <div class="footer-setting-item"><img src="/public/img/talk.svg" alt="" /></div>
+          <div class="footer-setting-item"><img src="/public/img/friends.svg" alt="" /></div>
+          <div class="footer-setting-leave"><img src="/public/img/leave.svg" alt="" />退出する</div>
+        </div>
+      </footer>
     </div>
 
     <!-- <script src="/public/move.js"></script>
