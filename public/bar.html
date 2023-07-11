@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0%;
+            padding: 0%;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        #map {
+            width: auto;
+            height: auto;
+            padding: 0%;
+            margin: 0%;
+            /* display: flex; */
+        }
+
+        #d1 {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            left: 852px;
+            top: 620px;
+            z-index: 30;
+        }
+        #d2 {
+            position: absolute;
+            width: 47px;
+            height: 46px;
+            left: 852px;
+            top: 193px;
+            z-index: 30;
+        }
+
+        #d3 {
+            position: absolute;
+            width: 103px;
+            height: 132px;
+            left: 487px;
+            top: 681px;
+            opacity: 0;
+        }
+
+        #container .table {
+            width: 50px;
+            height: 60px;
+            background-color: rgba(208, 106, 4, 0);
+            /* 或者设置其他背景颜色 */
+            position: absolute;
+            top: 420px;
+            left: 470px;
+            z-index: 5;
+        }
+
+        #container .table_area {
+            width: 90px;
+            height: 100px;
+            background-color: rgba(180, 171, 171, 0);
+            /* 或者设置其他背景颜色 */
+            position: absolute;
+            top: 400px;
+            left: 450px;
+            z-index: 0;
+        }
+
+        .myBox {
+            width: 10px;
+            height: 10px;
+            border-radius: 999em;
+            /* 其他样式属性 */
+            position: absolute;
+        }
+
+        .newBox {
+            width: 10px;
+            height: 10px;
+            border-radius: 999em;
+            /* 其他样式属性 */
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <img id="d1" src="/public/img/d1.png" alt="">
+    <img id="d2" src="/public/img/d2.png" alt="">
+    <img id="d3" src="/public/img/d3.png" alt="">
+    <img id="map" src="/public/img/bar.png" alt="">
+    <div id="container">
+        <div class="table"></div>
+        <div class="table_area"></div>
+    </div>
+    <script src="/public/move.js"></script>
+    <script src="/public/door.js"></script>
+    <script>
+        window.addEventListener("load", function () {
+            var elements = document.body;
+
+            elements.style.transitionDelay = 0.2 + "s";
+            elements.style.opacity = 1;
+        });
+
+    </script>
+    <!-- <script src="move.js"></script> -->
+</body>
+
+</html>

@@ -42,11 +42,8 @@ if (username === null || username === "") {
   //追加木村
   const ws = new WebSocket('ws://localhost:8282/ws/test')
 
-  //追加videoMutebutton
-  const videoMuteButton = document.getElementById("videoMuteButton")
-  const audioMuteButton = document.getElementById("audioMuteButton")
-
-  
+  //追加mutebutton
+  const muteButton = document.getElementById("muteButton")
 
 
   // Listen On WebSocket コネクション　Open
@@ -636,55 +633,34 @@ function playAudio() {
 
 
 
-let videoPublication = null 
-let audioPublication = null 
+let publication = null 
+
+// //mutebutton
+// muteButton.addEventListener("click",function(){
+
+// })
 
 
-let videoMute = true
-let audioMute = true
-
+// navigator.mediaDevices
+// .getUserMedia({video: true})
+//   .then(stream => {
+//     localStream = stream
+// })
+//   .catch(error => {
+//     // error handling
+// })
 let localStream = null
-videoMuteButton.addEventListener('click',() => {
-  console.log(videoPublication)
-  if(videoMute){
-    console.log("解除")
-    videoMute = false
-    videoPublication.disable()
-  }else{
-    console.log("接続")
-    videoMute = true
-    videoPublication.enable()
-  }
-})
-audioMuteButton.addEventListener('click',() => {
-  console.log(audioPublication)
-  if(audioMute){
-    console.log("audio解除")
-    audioMute = false
-    audioPublication.disable()
-  }else{
-    console.log("audio接続")
-    audioMute = true
-    audioPublication.enable()
-  }
+muteButton.addEventListener('click',() => {
+  console.log(localStream)
+  localStream._isEnabled = false
+  // localStream.getVideoTracks()[0].stop()
+
+  // document.getElementById('local-video').srcObject = null
+
+
+
 })
 
-
-
-// カメラ映像取得
-// navigator.mediaDevices.getUserMedia({video: true, audio: true})
-//   .then( stream => {
-//   // 成功時にvideo要素にカメラ映像をセットし、再生
-//   const videoElm = document.getElementById('my-video')
-//   videoElm.srcObject = stream;
-//   videoElm.play();
-//   // 着信時に相手にカメラ映像を返せるように、グローバル変数に保存しておく
-//   localStream = stream;
-// }).catch( error => {
-//   // 失敗時にはエラーログを出力
-//   console.error('mediaDevice.getUserMedia() error:', error);
-//   return;
-// });
 
 
 /////////////////////////////////////////// webrtc //////////////////////////////////////////////////
@@ -746,7 +722,6 @@ const token = new SkyWayAuthToken({
     const joinButton = document.getElementById('join');
     
     const { audio, video } = await SkyWayStreamFactory.createMicrophoneAudioAndCameraStream();
-
     console.log(video)
     video.attach(localVideo);
     localStream = video
@@ -773,18 +748,12 @@ const token = new SkyWayAuthToken({
 
         const me = await room.join();
 
-        
-
         myId.textContent = me.id;
 
         webRTCId =  me.id
 
-        audioPublication = await me.publish(audio);
-        videoPublication = await me.publish(video);
-
-
-
-
+        await me.publish(audio);
+        await me.publish(video);
         let subscribeAndAttach  = null
         if (webRTCRoomname == "lobby"){
           subscribeAndAttach = (publication) => {
@@ -842,7 +811,7 @@ const token = new SkyWayAuthToken({
 
             (async () => {
                 const { stream } = await me.subscribe(publication.id);
-                
+
                 let newMedia;
 
                 switch (stream.track.kind) {
@@ -883,6 +852,14 @@ const token = new SkyWayAuthToken({
         room.onStreamPublished.add((e) => subscribeAndAttach(e.publication));
         return true
     })();
+    // leave = async () => {
+    //   room.close()
+    // }
+
+    // if(true){
+    //     console.log("join")
+    //     join()
+    // }
 
   })();
 

@@ -548,6 +548,13 @@ function playAudio() {
   audio.play();
 }
 
+//追加muteボタン
+const mutebutton = document.getElementById("muteButton")
+console.log("mutebutton" + mutebutton)
+mutebutton.addEventListener('click', function() {
+  console.log("#fejuawijioewajfioawej")
+  Publication.disable()
+});
 
 
 

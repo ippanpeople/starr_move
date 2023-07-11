@@ -33,5 +33,4 @@ document.getElementById("bar").addEventListener("click", function() {
     // 重定向到指定的网址
     var url = "https://starr_move_bar.rinlink.jp?username=" + encodeURIComponent(username);
     window.location.href = url;
-    console.log(username)
-  });
+});
