@@ -1,115 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="../css/index.css" /> -->
 
-<head>
     <style>
-        body {
-            margin: 0%;
-            padding: 0%;
-            opacity: 0;
-            transition: opacity 1s;
-        }
+      * {
+        padding: 0;
+        margin: 0;
+      }
 
-        img {
-            width: auto;
-            height: auto;
-            padding: 0%;
-            margin: 0%;
-            /* display: flex; */
-        }
+      .container {
+        position: relative;
+        min-width: 1440px;
+        width: 100vw;
+        height: 100vh;
+      }
 
-        #container .table {
-            width: 50px;
-            height: 60px;
-            background-color: rgba(208, 106, 4, 0);
-            /* 或者设置其他背景颜色 */
-            position: absolute;
-            top: 420px;
-            left: 470px;
-            z-index: 5;
-        }
+      nav {
+        position: fixed;
+        z-index: 10;
+        right: 0;
+        top: 0;
+        width: 25%;
+        min-width: 200px;
+        height: 100%;
+        background-color: #4b6396;
+      }
 
-        #container .table_area {
-            width: 90px;
-            height: 100px;
-            background-color: rgba(180, 171, 171, 0);
-            /* 或者设置其他背景颜色 */
-            position: absolute;
-            top: 400px;
-            left: 450px;
-            z-index: 0;
-        }
+      .nav-logo {
+        width: 100%;
+        padding: 16px 0;
+        font-size: 38px;
+        font-weight: bold;
+        text-align: center;
+        color: #fff;
+      }
 
-        .myBox {
-            width: 10px;
-            height: 10px;
-            border-radius: 999em;
-            /* 其他样式属性 */
-            position: absolute;
-        }
+      .nav-input input {
+        width: 100%;
+        height: 40px;
+        border: 1px #000 solid;
+      }
 
-        .newBox {
-            width: 10px;
-            height: 10px;
-            border-radius: 999em;
-            /* 其他样式属性 */
-            position: absolute;
-        }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        color: #fff;
+        padding: 10px 30px;
+      }
 
-        #bar_door {
-            position: absolute;
-            width: 72px;
-            height: 72px;
-            left: 10px;
-            top: 64px;
-            /* 初始时隐藏图像 */
-            display: none;
-        }
+      .nav-item_status {
+        margin: 20px 30px;
+        font-size: 14px;
+        color: #fff;
+      }
 
-        #room {
-            position: absolute;
-            background-image: url(/public/img/bar-door.png);
-            width: 84px;
-            height: 84px;
-            left: 714px;
-            top: 426px;
-            opacity: 0;
-        }
-        #bar {
-            position: absolute;
-            background-image: url(/public/img/bar-door.png);
-            width: 84px;
-            height: 84px;
-            left: 66px;
-            top: 66px;
-            opacity: 0;
-        }
+      .nav-item-img img {
+        width: 32px;
+        height: 32px;
+      }
+
+      .online-mark::after {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        display: block;
+        background-color: #08cd57;
+        position: absolute;
+        right: 20px;
+      }
+
+      .friend {
+        margin-top: 100px;
+        border-top: 2px solid #fff;
+      }
+
+      section {
+        position: relative;
+        z-index: 0;
+        width: 1500px;
+        height: 1500px;
+        background-color: #b9efff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      footer {
+        position: fixed;
+        z-index: 500;
+        bottom: 0;
+        width: 100%;
+        height: 64px;
+        background-color: #4b6396;
+      }
     </style>
-</head>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <h1 class="nav-logo">Loby</h1>
+        <div class="nav-input"><input type="text" name="" id="" /></div>
 
-<body>
-    <img src="/public/img/lobby.png" alt="">
-    <!-- <div id="bar_door_container">
-        <img id="bar_door" src="/public/img/bar-door.png">
-    </div> -->
-    <div id="container">
-        <div class="table"></div>
-        <div class="table_area"></div>
+        <div>
+          <div>
+            <h2 class="nav-item_status">オンライン</h2>
+
+            <div class="nav-item online-mark">
+              <div class="nav-item-img"><img src="/public/img/touma-01.png" alt="" /></div>
+              <p>坂口健太郎</p>
+            </div>
+
+            <div class="nav-item online-mark">
+              <div class="nav-item-img"><img src="/public/img/touma-01.png" alt="" /></div>
+              <p>坂口健太郎</p>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="nav-item_status">オンライン</h2>
+
+            <div class="nav-item">
+              <div class="nav-item-img"><img src="/public/img/touma-01.png" alt="" /></div>
+              <p>坂口健太郎</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="friend">
+          <h2 class="nav-item_status">友達</h2>
+
+          <div class="nav-item">
+            <div class="nav-item-img"><img src="/public/img/touma-01.png" alt="" /></div>
+            <p>坂口健太郎</p>
+          </div>
+        </div>
+      </nav>
+      <section>
+        <div id="section-overflow"><img src="/public/img/lobby.png" /></div>
+      </section>
+      <footer>footer</footer>
     </div>
-    <div id="bar"></div>
-    <div id="room"></div>
-    <script src="/public/move.js"></script>
-    <script src="/public/door.js"></script>
-    <script>
-        window.addEventListener("load", function () {
-            var elements = document.body;
-            console.log("hjosafgnkdjnkfgosjnkokfsjnbkagnlasfgasfgnswNGFsl'i'osrnfierwhn");
-            elements.style.transitionDelay = 0.2 + "s";
-            elements.style.opacity = 1;
-        });
 
+    <!-- <script src="/public/move.js"></script>
+    <script src="/public/door.js"></script> -->
+    <script>
+      window.addEventListener("load", function () {
+        var elements = document.body;
+        console.log("hjosafgnkdjnkfgosjnkokfsjnbkagnlasfgasfgnswNGFsl'i'osrnfierwhn");
+        elements.style.transitionDelay = 0.2 + "s";
+        elements.style.opacity = 1;
+
+        const img = document.getElementById("section-overflow");
+        let scaleFactor = 1;
+
+        function handleMouseWheel(event) {
+          const delta = Math.max(-1, Math.min(1, event.wheelDelta || -event.detail));
+          if (delta > 0) {
+            scaleFactor += 0.01;
+          } else {
+            scaleFactor -= 0.01;
+          }
+          img.style.transform = "scale(" + scaleFactor + ")";
+        }
+
+        if (img.addEventListener) {
+          img.addEventListener("mousewheel", handleMouseWheel, false);
+          img.addEventListener("DOMMouseScroll", handleMouseWheel, false);
+        } else {
+          img.attachEvent("onmousewheel", handleMouseWheel);
+        }
+      });
     </script>
     <!-- <script src="move.js"></script> -->
-</body>
-
+  </body>
 </html>

@@ -46,8 +46,8 @@ if (username === null || username === "") {
     o_key: oKey
   };
   // websocket コネクション
-  const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
-  //const ws = new WebSocket('ws://localhost:8181/ws/test')
+  // const ws = new WebSocket('wss://starr_move.rinlink.jp/ws/test')
+  const ws = new WebSocket('ws://localhost:8181/ws/test')
 
   // Listen On WebSocket コネクション　Open
   ws.addEventListener('open', (event) => {

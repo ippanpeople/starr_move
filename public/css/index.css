@@ -1,9 +1,10 @@
 * {
   padding: 0;
   margin: 0;
+  background-color: antiquewhite;
 }
 
-.grid-container {
+.container {
   position: relative;
   min-width: 1440px;
   width: 100vw;
@@ -18,6 +19,10 @@ nav {
   top: 0;
   width: 30%;
   height: 100%;
+  background-color: #faebd7;
+}
+
+.nav-logo {
   background-color: #faebd7;
 }
 
