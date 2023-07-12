@@ -70,6 +70,8 @@ if (username === null || username === "") {
     const receivedRoomname = receivedData.room_name
     const receivedWebRTCId = receivedData.webRTCId
     const receivedWebRTCMute = receivedData.webRTCMute
+    //追加チャット
+    const receivedChatText = receivedData.chatText
     console.log(receivedWebRTCMute)
 
 
@@ -286,21 +288,26 @@ if (username === null || username === "") {
         createVChatUser.forEach(
           delMediaId => {
             const vtag = document.querySelectorAll("#remote-media-area video[id='" + delMediaId + 'video' + "']");
-            const dtag = document.querySelectorAll("#remote-media-area dev[id='" + delMediaId + "']");
+            // const dtag = document.querySelectorAll("#remote-media-area dev[id='" + delMediaId + "']");
+            const dtag = document.getElementById(delMediaId)
+            console.log("fiewajifjewaijfoewajfoiawejfoawejfioweajoifjwaeoifjaewoijio")
+            console.log(dtag)
+
 
             const nametag = document.querySelectorAll("#remote-media-area h1[id='" + delMediaId + 'nametag' +  "']");
+            // const nametag = document.getElementById(delMediaId + "nametag")
 
             nametag.forEach(
               namet => {
                 namet.hidden = false
             })
 
-            dtag.forEach(
-              dev => {
-                dev.style.height = "114.5px"
-                dev.style.width = "152px"
-              }
-            )
+            // dtag.forEach(
+            //   dev => {
+                dtag.style.height = "114.5px"
+                dtag.style.width = "152px"
+            //   }
+            // )
 
             vtag.forEach(video => {
               // video.style.display = "none";
@@ -326,7 +333,8 @@ if (username === null || username === "") {
           delMediaId => {
             console
             const vtag = document.querySelectorAll("#remote-media-area video[id='" + delMediaId + 'video' + "']");
-            const dtag = document.querySelectorAll("#remote-media-area dev[id='" + delMediaId + "']");
+            // const dtag = document.querySelectorAll("#remote-media-area dev[id='" + delMediaId + "']");
+            const dtag = document.getElementById(delMediaId)
             const nametag = document.querySelectorAll("#remote-media-area h1[id='" + delMediaId + 'nametag' +  "']");
 
             nametag.forEach(
@@ -335,12 +343,12 @@ if (username === null || username === "") {
             })
 
             
-            dtag.forEach(
-              dev => {
-                dev.style.height = "0px"
-                dev.style.width = "0px"
-              }
-            )
+            // dtag.forEach(
+            //   dev => {
+                dtag.style.height = "0px"
+                dtag.style.width = "0px"
+            //   }
+            // )
             vtag.forEach(video => {
               // video.style.display = "none";
               video.hidden = true
@@ -450,11 +458,30 @@ if (username === null || username === "") {
           videotag.style.opacity = 1
         }
       }
-      
-   
+    }else if (resp_event == "chat_resp_event"){
+      console.log("jfiewajfijwaeofjeaw;ojfiejwaiwfjewiajfiajewifjaweo;fweaj;fjeawifjewaifjewaifoweaj;fjeiwa")
+      if(receivedUsername != username){
+        const div_chat = document.getElementById("chat-log-area")
+        const div_user = document.createElement("div")
+        div_user.classList = "username"
 
+        const chatLogArea = document.getElementById("chat-log-area");
+        const divUsername = document.createElement("div")
+        
+        divUsername.textContent = receivedUsername
+        const divChatText = document.createElement("div")
+        divChatText.textContent = receivedChatText
+
+        chatLogArea.appendChild(divUsername)
+        chatLogArea.appendChild(divChatText)
+
+        console.log(chatLogArea)
+        
+
+      }
+   
     }
-    /////////////////////////////
+    /////////////////////////////////////////////////////
   });
 
   // Listen On WebSocket Error
@@ -695,24 +722,51 @@ if (username === null || username === "") {
       console.log(positionData)
       ws.send(JSON.stringify(positionData))
       console.log(audioPublication)
-    // for( var i = 0;  i < 1;  i++){
-    //   if(videoMute){
-    //     console.log("解除")
-    //     videoMute = false
-    //     // videoPublication.replaceStream()
-    //     videoPublication.disable()
-  
-    //   }else{
-    //     console.log("接続")
-    //     videoMute = true
-    //     videoPublication.enable()
-    //   }
-    // }
+      if(videoMute){
+        videoMuteButton.style.backgroundImage = 'url(public/img/camera.png)';
+      }else {
+        videoMuteButton.style.backgroundImage = 'url(public/img/cameramute.png)';
+
+      }
+
   })
+  //追加チャット
+  const chatSendButton = document.getElementById("send_button")
+  chatSendButton.addEventListener('click',() => {
 
+    console.log("chat")
 
+    let text = document.getElementById("send_message").value
+    console.log(text)
+    document.getElementById("send_message").value = ""
+      const positionData = {
+        event: "chat_event",
+        username: username,
+        x: positionX,
+        y: positionY,
+        room_status: "entry",
+        connection_status: connection_status,
+        key_status: key_status,
+        webRTCId:webRTCId,
+        chatText: text,
+        webRTCMute:videoMute,
+        o_key: oKey
+      };
+      videoMute = !videoMute
+      console.log(positionData)
+      ws.send(JSON.stringify(positionData))
+      const chatLogArea = document.getElementById("chat-log-area");
+      const divUsername = document.createElement("div")
 
+      divUsername.textContent = username
+      const divChatText = document.createElement("div")
+      divChatText.textContent = text
 
+      chatLogArea.appendChild(divUsername)
+      chatLogArea.appendChild(divChatText)
+
+      console.log(chatLogArea)
+  })
 
 
 }
@@ -743,12 +797,16 @@ audioMuteButton.addEventListener('click',() => {
     console.log("audio解除")
     audioMute = false
     audioPublication.disable()
+    audioMuteButton.style.backgroundImage = 'url(public/img/micmute.png)';
+
   }else{
     console.log("audio接続")
     audioMute = true
     audioPublication.enable()
+    audioMuteButton.style.backgroundImage = 'url(public/img/mic.png)';
   }
 })
+
 
 
 
@@ -854,7 +912,6 @@ const token = new SkyWayAuthToken({
 
         const me = await room.join();
 
-        
 
         myId.textContent = me.id;
 
@@ -862,9 +919,6 @@ const token = new SkyWayAuthToken({
 
         audioPublication = await me.publish(audio);
         videoPublication = await me.publish(video);
-
-
-
 
         let subscribeAndAttach  = null
         if (webRTCRoomname == "lobby"){
@@ -884,33 +938,33 @@ const token = new SkyWayAuthToken({
 
                   switch (stream.track.kind) {
                   case 'video':
-                      wapper_dev = document.createElement('dev');
+                      wapper_dev = document.createElement('div');
                       wapper_dev.classList.add("video_wrapper")
                       wapper_dev.style.backgroundColor = "black"
                       // wapper_dev.style.height = "114.5px"
                       // wapper_dev.style.width = "152px"
                       // wapper_dev.style.float = "left"
-                      wapper_dev.style.display = "inline-block"
-                      wapper_dev.style.border =" solid 1px #1E223B"
+
+                      // wapper_dev.style.display = "inline-block"
+                      // wapper_dev.style.border =" solid 1px #1E223B"
                       wapper_dev.style.borderRadius = "10px 10px 10px 10px"
-                      wapper_dev.style.marginLeft = "10px"
+                      // wapper_dev.style.marginLeft = "10px"
                       wapper_dev.id = publication.publisher.id
-                      wapper_dev.style.height = "0px"
+                      // wapper_dev.style.height = "0px"
+                      // wapper_dev.style.position = "relative"
+    
                       wapper_dev.style.width = "0px"
+                      // wapper_dev.hidden = true
 
                       nametag = document.createElement('h1')
                       nametag.style.position = "relative"
                       nametag.style.top = "100px"
-                      nametag.display = "block"
+                      // nametag.style.display = "block"
                       nametag.hidden = true
                       nametag.id = publication.publisher.id + "nametag"
 
                       
-                        
-                      
-                      
-
-
+                    
                       newMedia = document.createElement('video');
                       newMedia.playsInline = true;
                       newMedia.autoplay = true;
@@ -922,13 +976,14 @@ const token = new SkyWayAuthToken({
                       newMedia.id = publication.publisher.id + "video"
                       newMedia.style.background = "black"
                       wapper_dev.appendChild(newMedia)
+                      remoteMediaArea.appendChild(wapper_dev);
+
                       webRTCUser_list.forEach(u => {
                         if(u.webRTCId == publication.publisher.id){
                           nametag.textContent = u.username
-                          remoteMediaArea.appendChild(nametag)
+                          wapper_dev.appendChild(nametag)
                         }
                       })
-                      remoteMediaArea.appendChild(wapper_dev);
 
                       break;
 
@@ -942,8 +997,8 @@ const token = new SkyWayAuthToken({
                       newMedia.hidden = true
                       remoteMediaArea.appendChild(newMedia);
 
-
                       break;
+
                   default:
                       return;
                   }

@@ -115,7 +115,45 @@
             min-width: 100%;
             min-height: 100%;
         }
+        #local-video {
+            position: absolute;
+            top: 780px;
+            left: 500px;
+        }
+        #videoMuteButton{
+            position: absolute;
+            top: 830px;
+            left: 450px;
+        }
+        #audioMuteButton {
+            position: absolute;
+            top: 780px;
+            left: 450px;
+        }
 
+
+    
+        /* webrtc追加 */
+        #videoMuteButton {
+            width: 40px;
+            height: 40px;
+            background-image: url("public/img/camera.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none; /* 縁を削除 */
+            border-radius: 10%; /* 角を丸くする */
+        }
+        #audioMuteButton {
+            width: 40px;
+            height: 40px;
+            background-image: url("public/img/mic.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none; /* 縁を削除 */
+            border-radius: 10%; /* 角を丸くする */
+        }
     </style>
 </head>
 
@@ -138,6 +176,20 @@
     <script src="https://cdn.jsdelivr.net/npm/@skyway-sdk/room/dist/skyway_room-latest.js"></script>
 
 
+    <div id="chatarea">
+        <div id="chat-log-area">
+        
+        </div>
+        <div id="chatsendarea">
+            <textarea id="send_message"></textarea>
+            <button id="send_button">button</button>
+        </div>
+
+
+    </div>
+    
+
+
     <!--  ///////////////////////////////////// -->
     <!-- <script src="move.js"></script> -->
 
@@ -150,12 +202,8 @@
 
     <div id="remote-media-area"></div>
     <video id="local-video" width="100px" height="" muted playsinline pos></video>
-    <button id="videoMuteButton" >Vmute</button>
-    <button id="audioMuteButton" >Amute</button>
-
-    <!-- ////////////////////////////s -->
-
-
+    <button id="videoMuteButton" ></button>
+    <button id="audioMuteButton" "></button>
 
     <script src="/public/move.js"></script>
     <script src="/public/door.js"></script>
