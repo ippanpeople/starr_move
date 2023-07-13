@@ -8,6 +8,7 @@ let webRTCId = ""
 let webRTCRoomname = ""
 let preVChatUser = []
 let webRTCUser_list = null
+chatUsers = null
 
 
 //////////////////アニメーション用//////////////////
@@ -641,7 +642,7 @@ if (username === null || username === "") {
       } else {
         positionY += 0;
       }
-
+      
       oKey = 'ArrowDown';
     } else if (key === 'ArrowLeft') {
       //////////////////アニメーション用//////////////////
@@ -726,15 +727,15 @@ if (username === null || username === "") {
         videoMuteButton.style.backgroundImage = 'url(public/img/camera.png)';
       }else {
         videoMuteButton.style.backgroundImage = 'url(public/img/cameramute.png)';
-
       }
 
   })
   //追加チャット
   const chatSendButton = document.getElementById("send_button")
   chatSendButton.addEventListener('click',() => {
-
     console.log("chat")
+
+    chatUser = "macross"
 
     let text = document.getElementById("send_message").value
     console.log(text)
@@ -749,6 +750,7 @@ if (username === null || username === "") {
         key_status: key_status,
         webRTCId:webRTCId,
         chatText: text,
+        chatUsers: chatUsers,
         webRTCMute:videoMute,
         o_key: oKey
       };
@@ -765,6 +767,7 @@ if (username === null || username === "") {
       chatLogArea.appendChild(divUsername)
       chatLogArea.appendChild(divChatText)
 
+
       console.log(chatLogArea)
   })
 
@@ -780,8 +783,6 @@ function playAudio() {
   audio.play();
 }
 
-
-
 let videoPublication = null 
 let audioPublication = null 
 
@@ -790,6 +791,11 @@ let videoMute = true
 let audioMute = true
 
 let localStream = null
+
+const chatUserSearch = document.getElementById("chat-user-search")
+// chatUserSearch.addEventListener('click',() => {
+//   let window = document.getElementById("search-window")
+// })
 
 audioMuteButton.addEventListener('click',() => {
 
@@ -806,8 +812,7 @@ audioMuteButton.addEventListener('click',() => {
     audioMuteButton.style.backgroundImage = 'url(public/img/mic.png)';
   }
 })
-
-
+//追加チャット
 
 
 // カメラ映像取得

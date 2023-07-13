@@ -26,6 +26,7 @@ type SendMessage struct {
 	WebRTCRoomname string `json:"webRTCRoomname"`
 	WebRTCId string `json:"webRTCId"`
 	WebRTCMute bool `json:"webRTCMute"`
+	ChatUsers []string `json:"chatUsers"`
 	ChatText string `json:"chatText"`
 	Connection_status string `json:"connection_status"`
 	Message string `json:"message"` 
@@ -265,6 +266,27 @@ func (us users)userIndex(checkname string)(int){
 }
 //websocketのbroadcast(connection_statusがconnectedの人のみ)
 func broadcast(m SendMessage){
+	fmt.Println("SendMessage:", m)
+	for cName,client := range clients{
+		i := searchUsername(cName)
+		fmt.Println("i:", i)
+		if i != -1{
+			if us.user_list[i]["connection_status"].(string) == "connected" {
+				err := client.WriteJSON(m)
+				fmt.Println("send")
+				if err != nil {
+					log.Printf("error: %v", err)
+						client.Close()
+						log.Printf("error: init_event")
+						delete(clients, cName)
+				}
+			}
+		}else{
+			fmt.Print("-------------Broadcast index is -1----------")
+		}
+	}
+}
+func unicast(m SendMessage){
 	fmt.Println("SendMessage:", m)
 	for cName,client := range clients{
 		i := searchUsername(cName)

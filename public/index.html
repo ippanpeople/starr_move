@@ -154,6 +154,80 @@
             border: none; /* 縁を削除 */
             border-radius: 10%; /* 角を丸くする */
         }
+
+        /* チャット追加 */
+        #chatarea {
+            position: absolute;
+            top: 0px;
+            left: 1200px;
+            height: 864px;
+
+        }
+        #search-window{
+            width: 165.54px;
+            height: 88px;
+            flex-shrink: 0;
+
+            border-radius: 5px;
+        }
+        #chat-log-area{
+            width: 180px;
+            height: 75%;
+            overflow: scroll;
+            background: orange;
+
+        }
+        #chat-message{
+            position: relative;
+            width: 100%;
+            word-wrap: break-word;
+        }
+        #chat-user-search {
+            width: 165px;
+
+        }
+        #search-window{
+            position: relative;
+            display: flex;
+            flex-direction: column-reverse; /* 下を基準にして上に要素を追加 */
+            align-items: flex-end; /* 要素を下端に揃える */
+            position:absolute;
+            top: 75%;
+        }
+        #chat-send-area{
+            position:fixed;
+            display: flex;
+            flex-direction: column; /* 縦並びに変更 */
+            align-items: flex-start; /* アイテムを先頭に揃える */
+            top: 55%;
+        }
+        #chat-search-area{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        #chat-address {
+            text-align: left;
+        }
+        #chat-search-right {
+            text-align: right;
+        }
+        #chat-search-button{
+            border-radius: 5px; /* 角を丸くする */
+            width: 100%;
+            color: white;
+            background-color: darkblue;
+        }
+        #search-window{
+            margin-left: 55px;
+            margin-bottom: 50px;
+            background-color: blueviolet;
+            width: 40%;
+        }
+        #chat-logo{
+            text-align: center;
+        }
+
     </style>
 </head>
 
@@ -175,20 +249,44 @@
     <script src="/public/door.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/@skyway-sdk/room/dist/skyway_room-latest.js"></script>
 
-
     <div id="chatarea">
+        <div id="chat-logo">chat</div>
+        <div>------------------------------------------------</div>
         <div id="chat-log-area">
-        
+            <div id="chat-log-date" style="text-align: center;">今日</div>
+            <div id="chat-username">
+                kne
+            </div>
+            <div id="chat-message">
+                マクロスfewoaifjeowijfewajfeiajfioewjfjei
+            </div>
         </div>
-        <div id="chatsendarea">
+
+        <div>------------------------------------------------</div>
+
+        <div id="search-window" >
+            <div id="chat-search">検索　</div>
+
+            <div id="chat-userlist">
+                <div id="chat-users">
+                    ユーザ名　
+                </div>
+            </div>
+            <div id="users">全員　</div>
+        </div>
+
+        <div id="chat-send-area">
+            <div id="chat-search-area">
+                <div id="chat-address">宛先:</div>
+                <div>
+                    <div id="chat-search-button">　全員　　　^　</div>
+                </div>
+                <!-- <input type="button" id="chat-user-search" value="全員" width="100px"> 変数に格納 -->
+            </div>
             <textarea id="send_message"></textarea>
             <button id="send_button">button</button>
         </div>
-
-
     </div>
-    
-
 
     <!--  ///////////////////////////////////// -->
     <!-- <script src="move.js"></script> -->
@@ -207,9 +305,5 @@
 
     <script src="/public/move.js"></script>
     <script src="/public/door.js"></script>
-
-
-
 </body>
-
 </html>
