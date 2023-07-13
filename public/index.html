@@ -268,6 +268,19 @@
             height: 64px;
             background-color: #4b6396;
         }
+        #openai-btn {
+            width: 40px;
+            height: 40px;
+            background-image: url("public/img/openai.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: none; /* 縁を削除 */
+            border-radius: 10%; /* 角を丸くする */
+        }
+        #window{
+            z-index: 9999999;
+        }
     </style>
 </head>
 
@@ -337,16 +350,25 @@
         <!-- <section>
           <div id="section-overflow"><img src="/public/img/lobby.png" /></div>
         </section> -->
-        <footer>footer</footer>
+        <footer>
+            <div id="openai-btn"></div>
+
+            <div id="window" hidden>
+                <input id="company"placeholder="企業"></input>
+                <input id="department" placeholder="分野"></input>
+                <input id="hobby" placeholder="趣味"></input>
+                <button id="openai-send">send</button>
+            </div>
+        </footer>
     </div>
 
-
-
-
+   
 
     <script src="/public/move.js"></script>
     <script src="/public/door.js"></script>
     <script src="/public/npc.js"></script>
+    <script src="/public/gitapi.js"></script>
+
     <script>
         window.addEventListener("load", function() {
             var elements = document.body;
